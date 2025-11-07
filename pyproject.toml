@@ -9,7 +9,8 @@ description = "An example Python project"
 authors = [
   { name = "Maria Konortoff", email = "mk251@rice.edu" },
   { name = "Diego Jimenez Vivaldi", email = "dj70@rice.edu" },
-  { name = "Alan Salceda", email = "as555@rice.edu" }
+  { name = "Alan Salceda", email = "as555@rice.edu" },
+  { name = "Mrtunjay Gupta", email = "mg227@rice.edu"}
 ]
 readme = "README.md"
 license = { text = "MIT" }
