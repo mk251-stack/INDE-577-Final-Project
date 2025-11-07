@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "rice_ml"
 version = "0.1.0"
 description = "An example Python project"
-authors = [{ name = "Maria Konortoff","Diego Jimenez", "Alan Salceda", email = "mk251@rice.edu","dj70@rice.edu" }]
+authors = [{ name = "Maria Konortoff","Diego Jimenez Vivaldi", "Alan Salceda", email = "mk251@rice.edu","dj70@rice.edu","as555@rice.edu" }]
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.9"
