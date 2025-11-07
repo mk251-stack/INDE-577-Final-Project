@@ -12,6 +12,7 @@ authors = [
   { name = "Alan Salceda", email = "as555@rice.edu" },
   { name = "Mrtunjay Gupta", email = "mg227@rice.edu"}
 ]
+
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.9"
