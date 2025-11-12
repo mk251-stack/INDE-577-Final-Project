@@ -1,7 +1,7 @@
-# Logistic Regression (from scratch)
+# Logistic Regression
 
 This folder contains:
-- `logistic_regression.ipynb`: end-to-end notebook using a dataset from `datasets/`
+- `logistic_regression.ipynb`: notebook using a dataset from `datasets/`
 - `logistic_regression.py`: reusable class implementing binary logistic regression with gradient descent
 
 ## How to run
