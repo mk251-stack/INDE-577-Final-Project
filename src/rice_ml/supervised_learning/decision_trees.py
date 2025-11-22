@@ -9,7 +9,7 @@ and understand the core ideas.
 Example
 -------
 >>> import numpy as np
->>> from rice_ml.supervised_learning.decision_tree import DecisionTreeClassifier
+>>> from rice_ml.supervised_learning.decision_trees import DecisionTreeClassifier
 >>>
 >>> X = np.array([[0, 0],
 ...               [0, 1],
