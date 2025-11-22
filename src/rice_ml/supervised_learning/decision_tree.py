@@ -118,7 +118,7 @@ class DecisionTreeClassifier:
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
-    def fit(self, X: np.ndarray, y: np.ndarray) -> "DecisionTreeClassifier":
+    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """Fit the decision tree classifier on the given training data.
 
         Parameters
@@ -145,7 +145,6 @@ class DecisionTreeClassifier:
 
         self.n_features_ = X.shape[1]
         classes = np.unique(y)
-        # Require integer-encoded classes for simplicity
         if not np.issubdtype(y.dtype, np.integer):
             raise ValueError("y must contain integer-encoded class labels (0, 1, 2, ...).")
         self.n_classes_ = int(classes.max() + 1)
@@ -153,7 +152,7 @@ class DecisionTreeClassifier:
         self._rng = np.random.default_rng(self.random_state)
 
         self.tree_ = self._grow_tree(X, y, depth=0)
-        return self
+        return None   # or just remove this line
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         """Predict class labels for the given samples.
