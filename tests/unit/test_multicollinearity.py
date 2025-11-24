@@ -4,7 +4,8 @@ from rice_ml.processing.multicollinearity import compute_vif, reduce_multicollin
 def test_compute_vif_returns_dataframe():
     df = pd.DataFrame({
         "x1": [1,2,3,4,5],
-        "x2": [2,4,6,8,10]  # perfectly collinear with x1
+        # Nearly collinear with x1 but with small noise to avoid divide-by-zero warnings
+        "x2": [2.0,4.1,6.1,8.2,10.3]
     })
 
     vif_df = compute_vif(df)
@@ -15,7 +16,8 @@ def test_compute_vif_returns_dataframe():
 def test_reduce_multicollinearity_removes_high_vif():
     df = pd.DataFrame({
         "x1": [1,2,3,4,5],
-        "x2": [2,4,6,8,10],  # collinear with x1
+        # Keep x2 strongly correlated with x1 while avoiding perfect collinearity
+        "x2": [2.0,4.1,6.1,8.2,10.3],
         "x3": [5,3,6,2,7]    # independent
     })
 

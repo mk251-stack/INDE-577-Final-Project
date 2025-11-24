@@ -11,9 +11,12 @@ We test:
 
 import numpy as np
 import pytest
-from sklearn.base import ClassifierMixin
+from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 
 from rice_ml.supervised_learning.ensemble_methods import get_models
+from rice_ml.supervised_learning import ensemble_methods
 
 
 # ---------------------------------------------------------
@@ -125,3 +128,76 @@ def test_voting_classifier_structure(models):
 
     # Ensure soft voting is being used
     assert voting.voting == "soft", "VotingClassifier must use soft voting."
+
+
+# ---------------------------------------------------------
+# Test 7 — train_eval returns expected metrics for simple models
+# ---------------------------------------------------------
+def test_train_eval_outputs_dataframe_with_metrics():
+    # Use lightweight estimators to keep the test fast
+    simple_models = {
+        "Logistic": LogisticRegression(max_iter=200, random_state=0),
+        "DecisionTree": DecisionTreeClassifier(max_depth=3, random_state=0),
+    }
+
+    # Balanced synthetic dataset
+    X = np.array([
+        [0.0, 0.0],
+        [0.1, 0.0],
+        [0.2, 0.1],
+        [0.3, 0.1],
+        [0.4, 0.2],
+        [1.0, 1.0],
+        [1.1, 1.0],
+        [1.2, 1.1],
+        [1.3, 1.1],
+        [1.4, 1.2],
+    ])
+    y = np.array([0, 0, 0, 0, 0, 1, 1, 1, 1, 1])
+
+    results = ensemble_methods.train_eval(
+        simple_models, X, y, test_size=0.2, random_state=0, cv=2
+    )
+
+    # Expected structure and metrics
+    assert list(results.index) == ["Logistic", "DecisionTree"]
+    for column in ["accuracy", "roc_auc", "cv_accuracy_mean", "cv_accuracy_std"]:
+        assert column in results.columns
+        assert np.all(~np.isnan(results[column])), f"{column} should not be NaN"
+
+
+def test_train_eval_handles_models_without_predict_proba():
+    class DummyHardClassifier(BaseEstimator, ClassifierMixin):
+        def fit(self, X, y):
+            self.constant_ = int(np.bincount(y).argmax())
+            return self
+
+        def predict(self, X):
+            return np.full(len(X), self.constant_, dtype=int)
+
+    X = np.array([
+        [0.0, 0.0],
+        [1.0, 0.0],
+        [0.0, 1.0],
+        [1.0, 1.0],
+        [0.5, 0.5],
+        [1.5, 1.5],
+    ])
+    y = np.array([0, 0, 0, 1, 1, 1])
+
+    results = ensemble_methods.train_eval(
+        {"Dummy": DummyHardClassifier()},
+        X,
+        y,
+        test_size=0.33,
+        random_state=1,
+        cv=2,
+    )
+
+    assert list(results.index) == ["Dummy"]
+    assert np.isnan(results.loc["Dummy", "roc_auc"])
+    assert 0.0 <= results.loc["Dummy", "accuracy"] <= 1.0
+    assert results.loc["Dummy", "cv_accuracy_mean"] == pytest.approx(
+        results.loc["Dummy", "cv_accuracy_mean"]
+    )
+

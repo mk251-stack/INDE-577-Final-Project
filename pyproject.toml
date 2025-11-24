@@ -15,7 +15,14 @@ authors = [
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.9"
-dependencies = ["numpy", "matplotlib", "seaborn", "pandas", "requests"]
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "seaborn",
+    "pandas",
+    "requests",
+    "scipy",
+]
 
 [project.optional-dependencies]
 dev = ["pytest"]
