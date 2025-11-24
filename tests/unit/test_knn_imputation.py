@@ -12,7 +12,6 @@ def test_knn_imputer_basic_imputation():
     imputer = KNNImputer(n_neighbors=2)
     out = imputer.fit_transform(X)
 
-    # The missing value should equal the average of neighbors' column values (2.0, 2.0)
     assert out[1, 1] == 2.0
 
 def test_knn_impute_dataframe():
@@ -23,5 +22,4 @@ def test_knn_impute_dataframe():
 
     out = knn_impute(df)
 
-    # Imputed values should not be NaN
     assert out.isna().sum().sum() == 0
