@@ -69,3 +69,11 @@ Thumbs.db
 # Local IDE / project settings
 .idea/
 *.iml
+
+# Model files (very large, should never be committed)
+*.pkl
+*.joblib
+models/
+
+# Prevent accidentally committing intermediate notebook output
+**/*.ipynb_checkpoints
