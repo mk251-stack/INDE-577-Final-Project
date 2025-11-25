@@ -77,3 +77,39 @@ models/
 
 # Prevent accidentally committing intermediate notebook output
 **/*.ipynb_checkpoints
+
+# Ignore raw dataset formats commonly >100 MB
+*.csv
+*.tsv
+*.zip
+*.gz
+*.tar
+*.tar.gz
+*.rar
+
+# Ignore numpy and pickle dataset dumps
+*.npy
+*.npz
+*.pkl
+*.pickle
+
+# Ignore raw torch/tf dataset files except Fashion-MNIST idx
+# (which is safe and small)
+*.pt
+*.pth
+*.h5
+*.hdf5
+
+# Allowlist Fashion-MNIST IDX files
+!datasets/FashionMNIST/raw/*idx*
+
+# Ignore any file larger than 10 MB (git attribute)
+*.big
+
+# Optional: ignore anything inside datasets/ except small allowed files
+datasets/*
+
+# Allowlist for curated small datasets
+!datasets/BostonHousing.csv
+!datasets/UCI_Credit_Card.csv
+!datasets/FashionMNIST/**
