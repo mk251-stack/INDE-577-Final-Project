@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rice_ml"
+version = "0.1.0"
+description = "An example Python project"
+authors = [
+  { name = "Maria Konortoff", email = "mk251@rice.edu" },
+  { name = "Diego Jimenez Vivaldi", email = "dj70@rice.edu" },
+  { name = "Alan Salceda", email = "as555@rice.edu" },
+  { name = "Mrtunjay Gupta", email = "mg227@rice.edu" }
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "seaborn",
+    "pandas",
+    "requests",
+    "scipy",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["rice_ml", "data"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = ["tests"]
