@@ -1,201 +1,276 @@
 """
- K-Means Clustering Implementation and Helper Functions.
+K-Means clustering utilities for the Census Income dataset.
 
-This module provides a structured pipeline for K-Means clustering analysis,
-including essential steps for data preprocessing (handling missing values,
-One-Hot Encoding, standardization), model fitting, and optimal K determination.
-
-The functions are designed to be imported and orchestrated within a
-Jupyter Notebook, where visualization functions will be defined or called
-separately for reproducible data science workflows.
+This module provides reusable helper functions for:
+  - Loading and cleaning the dataset
+  - Encoding categorical variables
+  - Scaling features
+  - Running the elbow method
+  - Fitting a K-Means model
+  - Reducing dimensionality with PCA
+  - Attaching cluster labels and summarizing clusters
 """
 from __future__ import annotations
-from typing import Tuple
 
-import pandas as pd
+from typing import List, Sequence, Tuple
+
 import numpy as np
-
-from sklearn.preprocessing import StandardScaler
+import pandas as pd
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
 
-__all__ = [
-    "load_and_clean_data",
-    "preprocess_for_kmeans",
-    "find_optimal_k",
-    "perform_kmeans_clustering",
-]
 
-# ---------------------------------------------------------------------
-# Data Preparation and Preprocessing
-# ---------------------------------------------------------------------
+# ------------------------------------------------------------------
+# Data Loading & Preprocessing
+# ------------------------------------------------------------------
 
-def load_and_clean_data(filepath: str) -> pd.DataFrame:
+def load_census_data(path: str) -> pd.DataFrame:
     """
-    Loads the census income data and performs initial cleaning steps.
-
-    1. Replaces ' ?' (implicit missing values) with NaN.
-    2. Drops columns that are redundant for clustering ('education', 'fnlwgt', 'income').
-    3. Imputes missing categorical values using the mode.
+    Load the Census Income dataset from a CSV file.
 
     Parameters
     ----------
-    filepath : str
-        Path to the census_income.csv file.
+    path : str
+        Path to the CSV file.
 
     Returns
     -------
     pd.DataFrame
-        The cleaned DataFrame ready for feature engineering.
+        Loaded DataFrame.
     """
-    # Load the data and replace explicit missing markers ' ?' with NaN
-    df = pd.read_csv(filepath)
-    df = df.replace(' ?', np.nan)
+    return pd.read_csv(path)
 
-    # 1. Drop redundant columns for clustering
-    df = df.drop(columns=['education', 'fnlwgt', 'income'], errors='ignore')
 
-    # 2. Impute missing categorical data using the mode
-    # Missing values are typically in 'workclass', 'occupation', 'native_country'
-    for col in ['workclass', 'occupation', 'native_country']:
-        if col in df.columns and df[col].isnull().any():
-            mode_value = df[col].mode()[0]
-            df[col].fillna(mode_value, inplace=True)
-
-    print(f"Initial shape after cleaning: {df.shape}")
-    print(f"Missing values remaining: {df.isnull().sum().sum()}")
-    return df
-
-def preprocess_for_kmeans(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, StandardScaler]:
+def clean_census_data(df: pd.DataFrame, selected_columns: Sequence[str]) -> pd.DataFrame:
     """
-    Performs feature engineering and scaling necessary for K-Means.
-
-    1. Groups 'native_country' into two categories (United-States/Other).
-    2. Applies One-Hot Encoding (OHE) to all categorical features.
-    3. Applies StandardScaler (Standardization) to the final numerical matrix.
+    Subset to selected columns, replace '?' with NaN, and drop rows with missing values.
 
     Parameters
     ----------
     df : pd.DataFrame
-        The cleaned DataFrame.
-
-    Returns
-    -------
-    tuple[pd.DataFrame, pd.DataFrame, StandardScaler]
-        - df_scaled: The final scaled data used for clustering.
-        - df_encoded: The one-hot encoded but unscaled data (for profiling).
-        - scaler: The fitted StandardScaler object.
-    """
-    df_processed = df.copy()
-
-    # 1. Address high cardinality in 'native_country'
-    df_processed['native_country_simple'] = np.where(
-        df_processed['native_country'] == ' United-States',
-        'United-States',
-        'Other'
-    )
-    df_processed = df_processed.drop(columns=['native_country'])
-
-    # 2. Identify categorical columns
-    categorical_cols = df_processed.select_dtypes(include='object').columns
-
-    # 3. One-Hot Encoding (OHE) for all categorical features
-    df_encoded = pd.get_dummies(
-        df_processed,
-        columns=categorical_cols,
-        drop_first=True # Drop one category to avoid multicollinearity
-    )
-    print(f"Shape after One-Hot Encoding: {df_encoded.shape}")
-
-    # 4. Feature Scaling (StandardScaler is mandatory for distance-based K-Means)
-    scaler = StandardScaler()
-    df_scaled = pd.DataFrame(
-        scaler.fit_transform(df_encoded),
-        columns=df_encoded.columns,
-        index=df_encoded.index
-    )
-
-    return df_scaled, df_encoded, scaler
-
-# ---------------------------------------------------------------------
-# K-Means Modeling and Optimal K Determination
-# ---------------------------------------------------------------------
-
-def find_optimal_k(df_scaled: pd.DataFrame, max_k: int = 15) -> pd.DataFrame:
-    """
-    Calculates Inertia (WCSS) and Silhouette Score for a range of K values
-    to help determine the optimal number of clusters.
-
-    Parameters
-    ----------
-    df_scaled : pd.DataFrame
-        The scaled data for clustering.
-    max_k : int, default=15
-        Maximum K value to test.
+        Original DataFrame.
+    selected_columns : Sequence[str]
+        Columns to keep for clustering.
 
     Returns
     -------
     pd.DataFrame
-        A DataFrame containing K, Inertia, and Silhouette Score for K=2 to max_k.
+        Cleaned DataFrame.
+    """
+    df_sub = df.loc[:, selected_columns].copy()
+    df_sub.replace("?", np.nan, inplace=True)
+    df_sub.dropna(inplace=True)
+    df_sub.reset_index(drop=True, inplace=True)
+    return df_sub
+
+
+def encode_features(
+    df: pd.DataFrame,
+    categorical_cols: Sequence[str],
+    drop_first: bool = True
+) -> pd.DataFrame:
+    """
+    One-hot encode categorical columns using pandas.get_dummies.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Cleaned DataFrame.
+    categorical_cols : Sequence[str]
+        Names of categorical columns to encode.
+    drop_first : bool, default True
+        Whether to drop the first level of each categorical variable
+        to avoid multicollinearity.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with numerical and one-hot encoded categorical features.
+    """
+    return pd.get_dummies(df, columns=list(categorical_cols), drop_first=drop_first)
+
+
+def scale_features(X: pd.DataFrame) -> Tuple[np.ndarray, StandardScaler]:
+    """
+    Standardize features to have mean 0 and variance 1.
+
+    Parameters
+    ----------
+    X : pd.DataFrame
+        Feature matrix.
+
+    Returns
+    -------
+    X_scaled : np.ndarray
+        Scaled feature matrix.
+    scaler : StandardScaler
+        Fitted scaler instance (can be reused for inverse transform or new data).
+    """
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X.values)
+    return X_scaled, scaler
+
+
+# ------------------------------------------------------------------
+# K-Means & Elbow Method
+# ------------------------------------------------------------------
+
+def compute_elbow_inertia(
+    X_scaled: np.ndarray,
+    k_values: Sequence[int],
+    random_state: int = 42,
+    n_init: int = 10,
+    max_iter: int = 300,
+) -> List[Tuple[int, float]]:
+    """
+    Compute inertia values for a range of cluster counts (K) for the elbow method.
+
+    Parameters
+    ----------
+    X_scaled : np.ndarray
+        Scaled feature matrix.
+    k_values : Sequence[int]
+        Sequence of K values to evaluate.
+    random_state : int, default 42
+        Random state for KMeans reproducibility.
+    n_init : int, default 10
+        Number of time the k-means algorithm will be run with different centroid seeds.
+    max_iter : int, default 300
+        Maximum number of iterations of the k-means algorithm.
+
+    Returns
+    -------
+    List[Tuple[int, float]]
+        List of (K, inertia) pairs.
     """
     results = []
+    for k in k_values:
+        model = KMeans(
+            n_clusters=k,
+            random_state=random_state,
+            n_init=n_init,
+            max_iter=max_iter,
+        )
+        model.fit(X_scaled)
+        results.append((k, float(model.inertia_)))
+    return results
 
-    for k in range(2, max_k + 1):
-        try:
-            # Use fixed random_state and n_init for reproducibility and stability
-            kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
-            kmeans.fit(df_scaled)
-            inertia = kmeans.inertia_
 
-            # Calculate Silhouette Score
-            silhouette_avg = silhouette_score(df_scaled, kmeans.labels_)
-
-            results.append({
-                'K': k,
-                'Inertia': inertia,
-                'Silhouette Score': silhouette_avg
-            })
-            print(f"Calculated metrics for K={k}")
-        except Exception as e:
-            print(f"Error for K={k}: {e}")
-            break
-
-    return pd.DataFrame(results)
-
-def perform_kmeans_clustering(df_scaled: pd.DataFrame, df_original: pd.DataFrame, k: int) -> pd.DataFrame:
+def fit_kmeans(
+    X_scaled: np.ndarray,
+    n_clusters: int,
+    random_state: int = 42,
+    n_init: int = 10,
+    max_iter: int = 300,
+) -> KMeans:
     """
-    Fits the final K-Means model with the chosen K and assigns cluster labels
-    back to the original (pre-scaled, one-hot encoded) DataFrame.
+    Fit a K-Means clustering model.
 
     Parameters
     ----------
-    df_scaled : pd.DataFrame
-        The scaled data used for fitting.
-    df_original : pd.DataFrame
-        The one-hot encoded (but unscaled) data used for profiling.
-    k : int
-        The chosen optimal number of clusters.
+    X_scaled : np.ndarray
+        Scaled feature matrix.
+    n_clusters : int
+        Number of clusters (K).
+    random_state : int, default 42
+        Random state for reproducibility.
+    n_init : int, default 10
+        Number of time the k-means algorithm will be run with different centroid seeds.
+    max_iter : int, default 300
+        Maximum number of iterations of the k-means algorithm.
+
+    Returns
+    -------
+    KMeans
+        Fitted KMeans model.
+    """
+    model = KMeans(
+        n_clusters=n_clusters,
+        random_state=random_state,
+        n_init=n_init,
+        max_iter=max_iter,
+    )
+    model.fit(X_scaled)
+    return model
+
+
+# ------------------------------------------------------------------
+# Dimensionality Reduction & Post-processing
+# ------------------------------------------------------------------
+
+def run_pca(X_scaled: np.ndarray, n_components: int = 2) -> Tuple[PCA, np.ndarray]:
+    """
+    Run PCA on scaled features for visualization.
+
+    Parameters
+    ----------
+    X_scaled : np.ndarray
+        Scaled feature matrix.
+    n_components : int, default 2
+        Number of principal components.
+
+    Returns
+    -------
+    pca : PCA
+        Fitted PCA object.
+    X_pca : np.ndarray
+        Transformed data of shape (n_samples, n_components).
+    """
+    pca = PCA(n_components=n_components, random_state=42)
+    X_pca = pca.fit_transform(X_scaled)
+    return pca, X_pca
+
+
+def attach_clusters(
+    df: pd.DataFrame,
+    labels: Sequence[int],
+    label_name: str = "cluster"
+) -> pd.DataFrame:
+    """
+    Attach cluster labels to a DataFrame.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Original or cleaned DataFrame with one row per observation.
+    labels : Sequence[int]
+        Cluster labels (e.g., model.labels_).
+    label_name : str, default "cluster"
+        Name of the new cluster column.
 
     Returns
     -------
     pd.DataFrame
-        The original encoded DataFrame with the 'Cluster_Label' column added.
-
-    Raises
-    ------
-    ValueError
-        If the number of clusters (k) is less than 2.
+        DataFrame with an additional cluster label column.
     """
-    if k < 2:
-        raise ValueError("The number of clusters (k) must be 2 or greater for K-Means.")
+    df_with_clusters = df.copy()
+    df_with_clusters[label_name] = labels
+    return df_with_clusters
 
-    print(f"Fitting K-Means model with K={k}...")
-    kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
-    kmeans.fit(df_scaled)
 
-    # Assign cluster labels back to the DataFrame used for analysis
-    df_clustered = df_original.copy()
-    df_clustered['Cluster_Label'] = kmeans.labels_
+def summarize_clusters(
+    df_with_clusters: pd.DataFrame,
+    cluster_col: str,
+    numeric_cols: Sequence[str],
+) -> pd.DataFrame:
+    """
+    Compute summary statistics for each cluster on selected numeric columns.
 
-    print("Clustering complete. Labels added.")
-    return df_clustered
+    Parameters
+    ----------
+    df_with_clusters : pd.DataFrame
+        DataFrame that includes a cluster column.
+    cluster_col : str
+        Name of the cluster label column.
+    numeric_cols : Sequence[str]
+        List of numeric column names to summarize.
+
+    Returns
+    -------
+    pd.DataFrame
+        Multi-index DataFrame with statistics (mean, median, count) for each cluster.
+    """
+    grouped = df_with_clusters.groupby(cluster_col)[list(numeric_cols)]
+    summary = grouped.agg(["mean", "median", "count"])
+    return summary
