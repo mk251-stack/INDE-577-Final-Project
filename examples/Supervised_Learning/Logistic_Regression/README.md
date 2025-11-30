@@ -90,47 +90,37 @@ Accuracy
 
 Both models achieved nearly identical accuracy:
 
-Model	Accuracy
-Custom Logistic Regression	0.7948
-Scikit-Learn Logistic Regression	0.7948
-AUC Score
-Model	AUC
-Custom Logistic Regression	0.8861
-Scikit-Learn Logistic Regression	0.8861
-Confusion Matrix
+Model - Accuracy
+Custom Logistic Regression - 0.7948
+Scikit-Learn Logistic Regression	- 0.7948
+### AUC Score
+Model	- AUC
+Custom Logistic Regression - 0.8861
+Scikit-Learn Logistic Regression - 0.8861
 
+### Confusion Matrix
 The custom model correctly classifies approximately 78–80% of each class.
 
-Cross-Validation
-
+### Cross-Validation
 5-fold cross-validation mean accuracy: 0.7944
 (Confirms stability and absence of overfitting.)
 
 ## 7. Interpretation of Coefficients
 
-Positive coefficients increase the probability of high generation.
-
-Negative coefficients indicate association with low generation.
-
-Standardization allows direct comparison between coefficients.
-
-The most influential predictors are energy source categories and producer type categories.
+- Positive coefficients increase the probability of high generation.
+- Negative coefficients indicate association with low generation.
+- Standardization allows direct comparison between coefficients.
+- The most influential predictors are energy source categories and producer type categories.
 
 ## 8. Conclusions
+- Logistic Regression performs consistently and effectively on this classification task.
+- The custom implementation matches Scikit-Learn performance exactly, validating correctness.
+- AUC values around 0.886 indicate strong discriminative power.
+- The dataset is large, balanced, and clean, making it well-suited for classification.
 
-Logistic Regression performs consistently and effectively on this classification task.
-
-The custom implementation matches Scikit-Learn performance exactly, validating correctness.
-
-AUC values around 0.886 indicate strong discriminative power.
-
-Dataset is large, balanced, and clean, making it well-suited for classification.
-
-Recommendations
-
-For forecasting actual megawatt-hours, use regression models instead.
-
-Consider tree-based methods (e.g., Random Forest) for capturing nonlinear relationships.
+### Recommendations
+- For forecasting actual megawatt-hours, use regression models instead.
+- Consider tree-based methods (e.g., Random Forest) for capturing nonlinear relationships.
 
 ## 9. File Structure
 examples/
