@@ -1,4 +1,4 @@
-# Logistic Regression — Energy Generation Classification
+# Logistic Regression
 
 INDE 577 — Supervised Learning
 Custom Implementation + Scikit-Learn Benchmark
