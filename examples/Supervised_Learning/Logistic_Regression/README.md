@@ -1,4 +1,4 @@
-         # Logistic Regression
+# Logistic Regression
 
 INDE 577 — Supervised Learning
 Custom Implementation + Scikit-Learn Benchmark
@@ -119,17 +119,3 @@ The custom model correctly classifies approximately 78–80% of each class.
 - For forecasting actual megawatt-hours, use regression models instead.
 - Consider tree-based methods (e.g., Random Forest) for capturing nonlinear relationships.
 
-## 9. File Structure
-examples/
-└── Supervised_Learning/
-    └── Logistic_Regression/
-        ├── Logistic_Regression.ipynb
-        ├── README.md
-datasets/
-    └── energy.csv
-src/
-    └── rice_ml/
-        ├── processing/
-        │   └── scaling.py
-        └── supervised_learning/
-            └── logistic_regression.py
