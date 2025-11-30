@@ -22,14 +22,13 @@ This transforms the continuous variable GENERATION (Megawatthours) into a binary
 
 The dataset contains 496,774 rows and the following features:
 
-Column	Description
-YEAR	Calendar year of energy generation
-MONTH	Month of observation
-STATE	U.S. state or region
-TYPE OF PRODUCER	Generator type (e.g., utility, IPP, industrial)
-ENERGY SOURCE	Fuel/source (coal, gas, hydro, wind, etc.)
-GENERATION (Megawatthours)	Continuous production output
-target	Derived binary label (0/1)
+YEAR - Calendar year of energy generation
+MONTH - Month of observation
+STATE - U.S. state or region
+TYPE OF PRODUCER - Generator type (e.g., utility, IPP, industrial)
+ENERGY SOURCE - Fuel/source (coal, gas, hydro, wind, etc.)
+GENERATION (Megawatthours) - Continuous production output
+target - Derived binary label (0/1)
 
 Additional notes:
 
@@ -41,44 +40,25 @@ After median-based labeling, classes are approximately balanced.
 
 
 Steps:
-
-Data loading and inspection
-
-Target creation using median generation threshold
-
-One-Hot Encoding of categorical variables
-
-Feature scaling using a custom StandardScaler
-
-Exploratory Data Analysis, including:
-
-Distribution plots
-
-Categorical frequency charts
-
-Correlation heatmap
-
-Model building:
-
-Custom Logistic Regression (implemented from scratch)
-
-Scikit-Learn LogisticRegression baseline
-
-Model evaluation:
-
-Accuracy
-
-Classification report
-
-Confusion matrix
-
-ROC curve and AUC
-
-5-fold cross-validation
-
-Coefficient interpretation
-
-Final conclusions and recommendations
+- Data loading and inspection
+- Target creation using median generation threshold
+- One-Hot Encoding of categorical variables
+- Feature scaling using a custom StandardScaler
+- Exploratory Data Analysis, including:
+  - Distribution plots
+  - Categorical frequency charts
+  - Correlation heatmap
+- Model building:
+  - Custom Logistic Regression (implemented from scratch)
+  - Scikit-Learn LogisticRegression baseline
+- Model evaluation:
+  - Accuracy
+  - Classification report
+  - Confusion matrix
+  - ROC curve and AUC
+- 5-fold cross-validation
+- Coefficient interpretation
+- Final conclusions and recommendations
 
 ## 4. Exploratory Data Analysis (EDA)
 
