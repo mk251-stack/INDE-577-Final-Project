@@ -63,34 +63,22 @@ Steps:
 ## 4. Exploratory Data Analysis (EDA)
 
 Key findings:
-
-Numeric columns include: YEAR, MONTH, GENERATION, target.
-
-Categorical variables show strong imbalance across states and energy sources.
-
-Correlation with the target is generally low, meaning the classifier relies heavily on encoded categories.
-
-No missing values detected.
-
+- Numeric columns include: YEAR, MONTH, GENERATION, target.
+- Categorical variables show strong imbalance across states and energy sources.
+- Correlation with the target is generally low, meaning the classifier relies heavily on encoded categories.
+- No missing values detected.
 EDA visualizations include:
-
-Histograms for numeric features
-
-Bar charts for the top 20 categories
-
-Correlation heatmap
+- Histograms for numeric features
+- Bar charts for the top 20 categories
+- Correlation heatmap
 
 ## 5. Model Development
 Custom Logistic Regression
-
 Implemented from scratch using:
-
-Sigmoid function
-
-Gradient descent optimization
-
-Adjustable learning rate and maximum iterations
-
+- Sigmoid function
+- Gradient descent optimization
+- Adjustable learning rate and maximum iterations
+  
 After encoding and scaling, the model is trained on a 75-dimensional feature vector.
 
 Scikit-Learn Baseline
