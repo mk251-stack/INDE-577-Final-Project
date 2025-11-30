@@ -1,4 +1,4 @@
-# Logistic Regression
+         # Logistic Regression
 
 INDE 577 — Supervised Learning
 Custom Implementation + Scikit-Learn Benchmark
@@ -21,20 +21,17 @@ This transforms the continuous variable GENERATION (Megawatthours) into a binary
 ## 2. Dataset Overview
 
 The dataset contains 496,774 rows and the following features:
-
-YEAR - Calendar year of energy generation
-MONTH - Month of observation
-STATE - U.S. state or region
-TYPE OF PRODUCER - Generator type (e.g., utility, IPP, industrial)
-ENERGY SOURCE - Fuel/source (coal, gas, hydro, wind, etc.)
-GENERATION (Megawatthours) - Continuous production output
-target - Derived binary label (0/1)
+- YEAR - Calendar year of energy generation
+- MONTH - Month of observation
+- STATE - U.S. state or region
+- TYPE OF PRODUCER - Generator type (e.g., utility, IPP, industrial)
+- ENERGY SOURCE - Fuel/source (coal, gas, hydro, wind, etc.)
+- GENERATION (Megawatthours) - Continuous production output
+- target - Derived binary label (0/1)
 
 Additional notes:
-
-No missing values were found.
-
-After median-based labeling, classes are approximately balanced.
+- No missing values were found.
+- After median-based labeling, classes are approximately balanced.
 
 ## 3. Project Workflow
 
