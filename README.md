@@ -41,10 +41,22 @@ print(predictions)
 - `tests/`: Pytest-based unit tests
 - `examples/`: Example notebooks and scripts
 
-## Testing
+## Running tests
 
-Run the unit test suite with:
+There are two supported ways to run the unit test suite.
 
-```bash
-pytest
-```
+### Option 1 — Editable install (recommended when internet access is available)
+
+    python -m pip install -e .[dev]
+    pytest
+
+### Option 2 — Direct source execution (offline / restricted environments)
+
+If your environment cannot fetch build dependencies during installation
+(e.g., missing network access for setuptools wheels), you can run tests
+directly against the source tree:
+
+    PYTHONPATH=src pytest
+
+This method bypasses editable installation while preserving the intended
+src layout and import structure.
