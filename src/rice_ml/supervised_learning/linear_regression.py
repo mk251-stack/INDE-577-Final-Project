@@ -15,10 +15,10 @@ Example
 >>> X = np.array([[1, 2], [2, 0], [3, 4]])
 >>> y = np.array([3, 1, 7])
 >>> model = LinearRegression().fit(X, y)
->>> model.coef_
-array([...])
+>>> model.coef_  # doctest: +ELLIPSIS
+array([0.666..., 1.333...])
 >>> model.predict(X)
-array([...])
+array([3., 1., 7.])
 """
 
 from __future__ import annotations
@@ -191,7 +191,7 @@ class LinearRegression:
                 "X^T X is nearly singular; model may be unstable."
             )
 
-        beta = np.linalg.inv(XtX) @ (X_design.T @ y_arr)
+        beta = np.linalg.solve(XtX, X_design.T @ y_arr)
 
         self.intercept_ = float(beta[0])
         self.coef_ = beta[1:]
@@ -214,22 +214,34 @@ class LinearRegression:
         sst = np.sum((y_arr - np.mean(y_arr))**2)
         ssr = sst - sse
 
-        self.r2_ = 1 - (sse / sst)
+        # Compute R^2; guard against constant y (sst == 0) producing NaN.
+        self.r2_ = 1 - (sse / sst) if sst != 0 else np.nan
+
+        # When df <= 0, we can fit coefficients but variance-based stats are undefined.
+        if df <= 0:
+            self.adj_r2_ = np.nan
+            self.cov_matrix_ = np.full_like(XtX, np.nan, dtype=float)
+            self.stderr_ = np.full(XtX.shape[0], np.nan, dtype=float)
+            self.tstats_ = np.full(XtX.shape[0], np.nan, dtype=float)
+            self.pvalues_ = np.full(XtX.shape[0], np.nan, dtype=float)
+            return self
+
         self.adj_r2_ = 1 - ((1 - self.r2_) * (n - 1) / df)
 
         # Variance of residuals
         sigma2 = sse / df
 
         # Var(beta) = sigma^2 * (X^T X)^(-1)
-        cov = sigma2 * np.linalg.inv(XtX)
+        cov = sigma2 * np.linalg.solve(XtX, np.eye(XtX.shape[0]))
         self.cov_matrix_ = cov
 
-        # Standard errors exclude intercept? No — include all.
+        # Standard errors exclude intercept? No ? include all.
         stderr = np.sqrt(np.diag(cov))
         self.stderr_ = stderr
 
-        # t-statistics
-        tstats = beta / stderr
+        # t-statistics (avoid divide-by-zero warnings when a std err is zero)
+        safe_stderr = np.where(stderr == 0, np.inf, stderr)
+        tstats = beta / safe_stderr
         self.tstats_ = tstats
 
         # Two-sided p-values (normal approx for simplicity)

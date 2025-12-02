@@ -265,6 +265,12 @@ class LabelPropagation:
 
         # Extract classes from labeled data only
         self.classes_ = np.unique(y[y >= 0])
+        if self.classes_.size == 0:
+            raise ValueError(
+                "No labeled samples were provided (all labels are -1). "
+                "Label propagation requires at least one labeled point."
+            )
+
 
         # Initialize soft label matrix
         F = np.zeros((n_samples, len(self.classes_)), dtype=float)
