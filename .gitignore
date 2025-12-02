@@ -58,6 +58,10 @@ dmypy.json
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints
+**/*.ipynb_checkpoints
+
+# nbconvert output image folders
+*_files/
 
 # VS Code
 .vscode/
@@ -113,3 +117,4 @@ datasets/*
 !datasets/BostonHousing.csv
 !datasets/UCI_Credit_Card.csv
 !datasets/FashionMNIST/**
+*_files/
