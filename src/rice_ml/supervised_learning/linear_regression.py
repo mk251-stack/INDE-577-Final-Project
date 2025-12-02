@@ -15,10 +15,10 @@ Example
 >>> X = np.array([[1, 2], [2, 0], [3, 4]])
 >>> y = np.array([3, 1, 7])
 >>> model = LinearRegression().fit(X, y)
->>> model.coef_
-array([...])
+>>> model.coef_  # doctest: +ELLIPSIS
+array([0.666..., 1.333...])
 >>> model.predict(X)
-array([...])
+array([3., 1., 7.])
 """
 
 from __future__ import annotations
@@ -209,17 +209,23 @@ class LinearRegression:
         # -----------------------------
         n, p = X_arr.shape
         df = n - (p + 1)  # degrees of freedom
-        if df <= 0:
-            raise ValueError(
-                "Degrees of freedom must be positive; provide more samples "
-                "or reduce the number of features."
-            )
-        
+
         sse = np.sum(residuals**2)
         sst = np.sum((y_arr - np.mean(y_arr))**2)
         ssr = sst - sse
 
-        self.r2_ = 1 - (sse / sst)
+        # Compute R^2; guard against constant y (sst == 0) producing NaN.
+        self.r2_ = 1 - (sse / sst) if sst != 0 else np.nan
+
+        # When df <= 0, we can fit coefficients but variance-based stats are undefined.
+        if df <= 0:
+            self.adj_r2_ = np.nan
+            self.cov_matrix_ = np.full_like(XtX, np.nan, dtype=float)
+            self.stderr_ = np.full(XtX.shape[0], np.nan, dtype=float)
+            self.tstats_ = np.full(XtX.shape[0], np.nan, dtype=float)
+            self.pvalues_ = np.full(XtX.shape[0], np.nan, dtype=float)
+            return self
+
         self.adj_r2_ = 1 - ((1 - self.r2_) * (n - 1) / df)
 
         # Variance of residuals
