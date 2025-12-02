@@ -20,8 +20,9 @@ dependencies = [
     "matplotlib",
     "seaborn",
     "pandas",
-    "requests",
     "scipy",
+    "scikit-learn",
+    "statsmodels",
 ]
 
 [project.optional-dependencies]

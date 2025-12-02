@@ -229,12 +229,13 @@ class LinearRegression:
         cov = sigma2 * np.linalg.solve(XtX, np.eye(XtX.shape[0]))
         self.cov_matrix_ = cov
 
-        # Standard errors exclude intercept? No — include all.
+        # Standard errors exclude intercept? No ? include all.
         stderr = np.sqrt(np.diag(cov))
         self.stderr_ = stderr
 
-        # t-statistics
-        tstats = beta / stderr
+        # t-statistics (avoid divide-by-zero warnings when a std err is zero)
+        safe_stderr = np.where(stderr == 0, np.inf, stderr)
+        tstats = beta / safe_stderr
         self.tstats_ = tstats
 
         # Two-sided p-values (normal approx for simplicity)
