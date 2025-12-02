@@ -191,7 +191,7 @@ class LinearRegression:
                 "X^T X is nearly singular; model may be unstable."
             )
 
-        beta = np.linalg.inv(XtX) @ (X_design.T @ y_arr)
+        beta = np.linalg.solve(XtX, X_design.T @ y_arr)
 
         self.intercept_ = float(beta[0])
         self.coef_ = beta[1:]
@@ -209,7 +209,12 @@ class LinearRegression:
         # -----------------------------
         n, p = X_arr.shape
         df = n - (p + 1)  # degrees of freedom
-
+        if df <= 0:
+            raise ValueError(
+                "Degrees of freedom must be positive; provide more samples "
+                "or reduce the number of features."
+            )
+        
         sse = np.sum(residuals**2)
         sst = np.sum((y_arr - np.mean(y_arr))**2)
         ssr = sst - sse
@@ -221,7 +226,7 @@ class LinearRegression:
         sigma2 = sse / df
 
         # Var(beta) = sigma^2 * (X^T X)^(-1)
-        cov = sigma2 * np.linalg.inv(XtX)
+        cov = sigma2 * np.linalg.solve(XtX, np.eye(XtX.shape[0]))
         self.cov_matrix_ = cov
 
         # Standard errors exclude intercept? No — include all.
