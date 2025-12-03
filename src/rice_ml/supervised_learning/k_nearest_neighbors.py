@@ -7,7 +7,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
 
-def build_knn_pipeline(cat_cols, num_cols, n_neighbors=5):
+def build_knn_pipeline(cat_cols, num_cols, n_neighbors=9):
     preprocess = ColumnTransformer([
         ("cat", OneHotEncoder(handle_unknown="ignore"), cat_cols),
         ("num", StandardScaler(), num_cols),
@@ -28,7 +28,7 @@ def train_knn_model(
     target_col,
     test_size=0.2,
     random_state=42,
-    n_neighbors=5,
+    n_neighbors=9,
     cat_cols=None,
     num_cols=None,
 ):
