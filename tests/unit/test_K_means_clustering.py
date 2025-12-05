@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytest
+from sklearn.cluster import KMeans
 from rice_ml.unsupervised_learning.k_means_clustering import (
     load_census_data,
     clean_census_data,

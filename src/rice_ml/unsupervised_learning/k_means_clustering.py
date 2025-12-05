@@ -186,6 +186,11 @@ def fit_kmeans(
     KMeans
         Fitted KMeans model.
     """
+    if isinstance(X_scaled, pd.DataFrame):
+        X_scaled = X_scaled.values
+    elif not isinstance(X_scaled, np.ndarray):
+        raise TypeError("X_scaled must be a numpy array or pandas DataFrame")    
+
     model = KMeans(
         n_clusters=n_clusters,
         random_state=random_state,
