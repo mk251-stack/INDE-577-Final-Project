@@ -74,10 +74,13 @@ def test_pca_requires_numeric_values():
         "B": [3, 4, 5]
     })
 
-    with pytest.raises(Exception):
-        numeric_df = select_numeric_features(df)
-        scale_energy_features(numeric_df)
+    # Should drop column A and keep only numeric column B
+    numeric_df = select_numeric_features(df)
+    assert list(numeric_df.columns) == ["B"]
 
+    # Scaling should work on remaining numeric data
+    X_scaled, _ = scale_energy_features(numeric_df)
+    assert X_scaled.shape == (3, 1)
 
 # ----------------------------
 # PCA — Behavior tests
