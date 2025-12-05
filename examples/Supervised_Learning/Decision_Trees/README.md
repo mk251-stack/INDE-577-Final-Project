@@ -56,3 +56,6 @@ This makes sense socioeconomically. Income is strongly related to marital status
 
 The model performs especially well for the lower income class, which dominates the dataset, and it provides a clear ranking of which attributes matter most for predicting income. Furthermore, realistically, we see that hihgher income population has a lot more social and intangible/tangible factors.
 
+# Outlook:
+
+Random Forest is the next logical choice because it reduces the overfitting that single decision trees are prone to by averaging predictions across many independently trained trees. Each tree sees different subsets of data and features, allowing the ensemble to capture minority-class patterns and stabilize noisy splits. This leads to higher overall generalization performance, especially on imbalanced datasets like the census income data. Feature importance estimates also become more reliable because they are aggregated across many models rather than driven by a few dominant splits. As a result Random Forest typically achieves better recall, higher F1 scores and more robust predictions compared to a standalone Decision Tree. At least thats the thought , running random forests on the dataset should give us insights into this :)
