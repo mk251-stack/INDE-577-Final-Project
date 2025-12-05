@@ -94,8 +94,3 @@ On the energy generation classification task, the perceptron achieves:
 
 The model demonstrates strong generalization and minimal overfitting.  
 The high-dimensional one-hot-encoded feature space enables the perceptron to find a separating hyperplane effectively.
-
-## 6. References
-
-- Rosenblatt, F. (1957). The Perceptron: A probabilistic model for information storage and organization in the brain.
-- McCulloch & Pitts (1943). A logical calculus of ideas immanent in nervous activity.
