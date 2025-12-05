@@ -26,23 +26,6 @@ from sklearn.preprocessing import StandardScaler
 # Data Loading & Preprocessing
 # ------------------------------------------------------------------
 
-def load_census_data(path: str) -> pd.DataFrame:
-    """
-    Load the Census Income dataset from a CSV file.
-
-    Parameters
-    ----------
-    path : str
-        Path to the CSV file.
-
-    Returns
-    -------
-    pd.DataFrame
-        Loaded DataFrame.
-    """
-    return pd.read_csv(path)
-
-
 def clean_census_data(df: pd.DataFrame, selected_columns: Sequence[str]) -> pd.DataFrame:
     """
     Subset to selected columns, replace '?' with NaN, and drop rows with missing values.
