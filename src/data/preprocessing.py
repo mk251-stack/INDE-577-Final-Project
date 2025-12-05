@@ -1,41 +1,14 @@
-"""
+""" 
 Reusable preprocessing utilities for tabular datasets.
 
 Contains:
-- load_data(path)
 - preprocess_credit_dataset(df)
 """
 
 import pandas as pd
-from pathlib import Path
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-
-
-# -------------------------------------------------------------------
-# Robust load_data with automatic resolution to project root
-# -------------------------------------------------------------------
-def load_data(path):
-    path = Path(path)
-
-    # (1) Try direct path
-    if path.exists():
-        return pd.read_csv(path)
-
-    # (2) Try relative to project root (three levels up from src/data)
-    project_root = Path(__file__).resolve().parents[3]
-    alt_path = project_root / path
-
-    if alt_path.exists():
-        return pd.read_csv(alt_path)
-
-    raise FileNotFoundError(
-        f"Dataset not found.\n"
-        f"Tried: {path}\n"
-        f"Then: {alt_path}"
-    )
-
 
 # -------------------------------------------------------------------
 # Preprocessing for UCI Credit Card dataset
