@@ -14,43 +14,41 @@ to propagate limited supervision using a k-NN graph.
 
 ### Workflow
 
-1. Load raw Fashion-MNIST images
-2. Subsample training data for graph construction
-3. Hide most labels via `make_semi_supervised_labels`
-4. Train custom `LabelPropagation`
+1. Load raw Fashion-MNIST images  
+2. Subsample training data for graph construction  
+3. Hide most labels via `make_semi_supervised_labels`  
+4. Train custom `LabelPropagation`  
 5. Evaluate:
    - Transductive performance (on graph nodes)
    - Inductive performance (on held-out test points)
-6. Compare against Logistic Regression baseline
-7. Study scalability as the number of labeled samples increases
-8. Tune hyperparameters via grid search
-9. Visualize learned structure with PCA
+6. Compare against Logistic Regression baseline  
+7. Study scalability as the number of labeled samples increases  
+8. Tune hyperparameters via grid search  
+9. Visualize learned structure with PCA  
 
 ---
 
-## Key results
+## Dataset
 
-- With **10 labels per class**:
-  - Graph accuracy ≈ **0.55**
-  - Test accuracy ≈ **0.52**
+This experiment uses the **Fashion-MNIST** dataset, provided by Zalando Research.
 
-- Logistic Regression baseline trained on the same labeled set achieves
-  ≈ **0.69** test accuracy, but does not leverage unlabeled data.
+Due to file-size limits, the raw dataset is **not included in this repository**
+and must be downloaded separately.
 
-- Label Propagation performs best in extreme low-label regimes.
+📥 **Download here:**  
+https://www.kaggle.com/datasets/zalando-research/fashionmnist
 
-- Hyperparameter tuning identifies an optimal region around:
-  - `n_neighbors = 10`
-  - `alpha ≈ 0.90`
-  - `gamma = None` or `0.01`
+### Download instructions
 
-yielding test accuracies up to ≈ **0.66–0.67**.
+#### Option 1 — Kaggle website
+1. Open the link above.
+2. Download the dataset ZIP file.
+3. Extract all files into the project’s `datasets/` directory so they match
+   the expected filenames used in the notebook.
 
----
-
-## How to run
-
-Activate the project virtual environment and launch:
+#### Option 2 — Kaggle CLI
+If you have the Kaggle API installed and configured:
 
 ```bash
-jupyter notebook
+kaggle datasets download -d zalando-research/fashionmnist
+unzip fashionmnist.zip -d datasets/
