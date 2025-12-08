@@ -48,9 +48,3 @@ Preprocessing steps include:
 - Train/Test split before model training
 
 These steps ensure the data is formatted properly for neural network optimization.
-
-## Files
-
-- Multilayer_Perceptron.ipynb — Notebook with preprocessing, training, evaluation, and comparison with scikit-learn
-- multilayer_perceptron.py — Custom single-hidden-layer MLP implementation
-- README.md — Documentation file for this directory

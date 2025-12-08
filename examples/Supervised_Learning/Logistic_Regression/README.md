@@ -115,7 +115,3 @@ The custom model correctly classifies approximately 78–80% of each class.
 - AUC values around 0.886 indicate strong discriminative power.
 - The dataset is large, balanced, and clean, making it well-suited for classification.
 
-### Recommendations
-- For forecasting actual megawatt-hours, use regression models instead.
-- Consider tree-based methods (e.g., Random Forest) for capturing nonlinear relationships.
-
