@@ -27,18 +27,24 @@ class DecisionTreeClassifier(SkDecisionTreeClassifier):
         X = np.asarray(X)
         y = np.asarray(y)
 
-        # y must be integer labels
+
+        if y.ndim != 1:
+            raise ValueError("Labels y must be a 1D array")
+
+
         if not np.issubdtype(y.dtype, np.integer):
             raise ValueError("Labels y must be integers")
 
-        # X must be 2D
         if X.ndim != 2:
             raise ValueError("Input X must be a 2D array")
+
+        if X.shape[0] != y.shape[0]:
+            raise ValueError("X and y must have the same number of samples")
 
         return super().fit(X, y)
 
     def _check_fitted(self):
-        # sklearn sets tree_ only after fitting
+
         if not hasattr(self, "tree_"):
             raise RuntimeError("DecisionTreeClassifier must be fitted before prediction")
 
