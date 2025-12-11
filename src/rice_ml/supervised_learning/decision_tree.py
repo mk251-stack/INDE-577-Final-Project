@@ -1,9 +1,69 @@
 import os
+import numpy as np
 import pandas as pd
 
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier as SkDecisionTreeClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+
+# ---------------------------------------------------------------------
+# Custom DecisionTreeClassifier wrapper for tests and notebooks
+# ---------------------------------------------------------------------
+
+
+class DecisionTreeClassifier(SkDecisionTreeClassifier):
+    """
+    Small wrapper around sklearn's DecisionTreeClassifier that adds
+    some validation behaviour expected by the unit tests.
+
+    Behaviour expected by tests:
+      * calling predict or predict_proba before fit raises RuntimeError
+      * X must be a 2D array
+      * y must contain integer labels
+    """
+
+    def fit(self, X, y):
+        X = np.asarray(X)
+        y = np.asarray(y)
+
+        # y must be integer labels
+        if not np.issubdtype(y.dtype, np.integer):
+            raise ValueError("Labels y must be integers")
+
+        # X must be 2D
+        if X.ndim != 2:
+            raise ValueError("Input X must be a 2D array")
+
+        return super().fit(X, y)
+
+    def _check_fitted(self):
+        # sklearn sets tree_ only after fitting
+        if not hasattr(self, "tree_"):
+            raise RuntimeError("DecisionTreeClassifier must be fitted before prediction")
+
+    def predict(self, X):
+        self._check_fitted()
+
+        X = np.asarray(X)
+        if X.ndim != 2:
+            raise ValueError("Input X must be a 2D array")
+
+        return super().predict(X)
+
+    def predict_proba(self, X):
+        self._check_fitted()
+
+        X = np.asarray(X)
+        if X.ndim != 2:
+            raise ValueError("Input X must be a 2D array")
+
+        return super().predict_proba(X)
+
+
+# ---------------------------------------------------------------------
+# Helpers for the census income dataset used in your notebooks
+# ---------------------------------------------------------------------
 
 
 def _project_root():
@@ -17,9 +77,13 @@ def load_census_dataset(target_col="income"):
 
     df = pd.read_csv(csv_path)
 
+    # binary label: 1 if income contains the symbol for >50K
     y = df[target_col].astype(str).str.contains(">") .astype(int)
-    X = df.drop(columns=[target_col,"fnlwgt"])
 
+    # drop target and fnlwgt from features
+    X = df.drop(columns=[target_col, "fnlwgt"])
+
+    # one hot encode categoricals
     cat_cols = X.select_dtypes(include=["object"]).columns
     X = pd.get_dummies(X, columns=cat_cols, drop_first=True)
 
