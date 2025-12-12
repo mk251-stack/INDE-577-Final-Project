@@ -48,3 +48,25 @@ Preprocessing steps include:
 - Train/Test split before model training
 
 These steps ensure the data is formatted properly for neural network optimization.
+
+## Notebook Workflow (`Multilayer_Perceptron.ipynb`)
+
+The notebook walks through:
+
+- Loading and cleaning `datasets/energy.csv`
+- Creating the binary target label based on the median generation value
+- One-Hot Encoding categorical variables and scaling numeric features
+- Training the custom single-hidden-layer MLP implementation
+- Plotting the cross-entropy loss curve and confusion matrix
+- Training and evaluating scikit-learn's `MLPClassifier` for comparison
+
+## Running the Notebook
+
+1. Install project dependencies from the repository root with `pip install -r requirements.txt`.
+2. Open `examples/Supervised_Learning/Multilayer_Perceptron/Multilayer_Perceptron.ipynb` in Jupyter.
+3. Ensure `datasets/energy.csv` is present and that the `src/` directory is available on the Python path for custom imports.
+
+## Results Summary
+
+- Custom MLP: train accuracy ≈ 0.505 and test accuracy ≈ 0.504, indicating the single-hidden-layer model failed to learn a useful decision boundary on this dataset.
+- scikit-learn `MLPClassifier`: test accuracy ≈ 0.981 with balanced precision/recall across classes; the notebook also records a `Training interrupted by user` warning during fitting.

@@ -73,7 +73,13 @@ The notebook demonstrates the full workflow:
   - Confusion matrix
 - Comparison with scikit-learn's Perceptron (optional)
 
-## 4. Implementation (`perceptron.py`)
+## 4. Running the Notebook
+
+1. Install dependencies from the repository root: `pip install -r requirements.txt`.
+2. Open `examples/Supervised_Learning/Perceptron/Perceptron.ipynb` in Jupyter.
+3. The notebook expects the dataset at `datasets/energy.csv` and uses the `src/` directory for the custom `rice_ml` package.
+
+## 5. Implementation (`perceptron.py`)
 
 Located in:
 src/rice_ml/supervised_learning/perceptron.py
@@ -85,12 +91,13 @@ Includes:
 - Prediction method  
 - Tracking misclassifications per epoch  
 
-## 5. Results Summary
+## 6. Results Summary
 
 On the energy generation classification task, the perceptron achieves:
 
-- Training Accuracy: ~95.35%
-- Test Accuracy: ~95.44%
+- Training Accuracy: ~96.13%
+- Test Accuracy: ~96.22%
+- Scikit-learn Perceptron benchmark test accuracy: ~92.07%
 
 The model demonstrates strong generalization and minimal overfitting.  
 The high-dimensional one-hot-encoded feature space enables the perceptron to find a separating hyperplane effectively.

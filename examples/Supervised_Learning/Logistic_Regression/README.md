@@ -57,7 +57,14 @@ Steps:
 - Coefficient interpretation
 - Final conclusions and recommendations
 
-## 4. Exploratory Data Analysis (EDA)
+## 4. Running the Notebook
+
+1. Install dependencies from the project root: `pip install -r requirements.txt`.
+2. Launch Jupyter and open `examples/Supervised_Learning/Logistic_Regression/Logistic_Regression.ipynb`.
+3. The notebook expects the dataset at `datasets/energy.csv` and adds `src/` to the Python path for the custom implementation.
+
+
+## 5. Exploratory Data Analysis (EDA)
 
 Key findings:
 - Numeric columns include: YEAR, MONTH, GENERATION, target.
@@ -69,7 +76,7 @@ EDA visualizations include:
 - Bar charts for the top 20 categories
 - Correlation heatmap
 
-## 5. Model Development
+## 6. Model Development
 Custom Logistic Regression
 Implemented from scratch using:
 - Sigmoid function
@@ -82,7 +89,7 @@ Scikit-Learn Baseline
 
 A standard LogisticRegression(max_iter=1000) model is used for benchmarking.
 
-## 6. Results
+## 7. Results
 Accuracy
 
 Both models achieved nearly identical accuracy:
@@ -102,14 +109,14 @@ The custom model correctly classifies approximately 78–80% of each class.
 5-fold cross-validation mean accuracy: 0.7944
 (Confirms stability and absence of overfitting.)
 
-## 7. Interpretation of Coefficients
+## 8. Interpretation of Coefficients
 
 - Positive coefficients increase the probability of high generation.
 - Negative coefficients indicate association with low generation.
 - Standardization allows direct comparison between coefficients.
 - The most influential predictors are energy source categories and producer type categories.
 
-## 8. Conclusions
+## 9. Conclusions
 - Logistic Regression performs consistently and effectively on this classification task.
 - The custom implementation matches Scikit-Learn performance exactly, validating correctness.
 - AUC values around 0.886 indicate strong discriminative power.
