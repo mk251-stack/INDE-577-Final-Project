@@ -21,3 +21,15 @@ def test_standard_scaler_inverse_behavior():
 
     # Transforming again should not change mean/std
     assert np.allclose(X_scaled.mean(axis=0), 0, atol=1e-7)
+
+
+def test_standard_scaler_recovers_original_values():
+    X = np.array([[2.0, 4.0], [6.0, 8.0], [10.0, 12.0]])
+
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    # Reconstruct the original values using stored mean and std
+    X_recovered = X_scaled * scaler.std_ + scaler.mean_
+
+    assert np.allclose(X_recovered, X)
