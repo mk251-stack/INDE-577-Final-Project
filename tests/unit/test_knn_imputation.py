@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 import pandas as pd
 from rice_ml.processing.KNN_imputation import KNNImputer, knn_impute
 
@@ -23,3 +24,15 @@ def test_knn_impute_dataframe():
     out = knn_impute(df)
 
     assert out.isna().sum().sum() == 0
+
+def test_knn_imputer_raises_when_no_valid_neighbors():
+    X = np.array([
+        [np.nan, np.nan],
+        [1.0, np.nan],
+        [np.nan, 2.0],
+    ])
+
+    imputer = KNNImputer(n_neighbors=2)
+
+    with pytest.raises(ValueError):
+        imputer.fit_transform(X)
