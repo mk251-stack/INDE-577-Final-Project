@@ -70,3 +70,11 @@ The notebook walks through:
 
 - Custom MLP: train accuracy ≈ 0.505 and test accuracy ≈ 0.504, indicating the single-hidden-layer model failed to learn a useful decision boundary on this dataset.
 - scikit-learn `MLPClassifier`: test accuracy ≈ 0.981 with balanced precision/recall across classes; the notebook also records a `Training interrupted by user` warning during fitting.
+
+## Key findings
+- The MLP improved flexibility by modeling nonlinear decision boundaries, often improving performance over purely linear methods.
+- Performance depends strongly on architecture (hidden units), learning rate, epochs, batch size, and regularization.
+- Susceptible to overfitting; train/validation curves are important diagnostics.
+
+## Conclusions
+MLP is appropriate when nonlinear relationships and interactions matter, but requires careful tuning and regularization to generalize.
