@@ -7,7 +7,7 @@ This module provides reusable helper functions for:
   - Scaling features
   - Running the elbow method
   - Fitting a K-Means model
-  - Reducing dimensionality with PCA
+  - Reducing dimensionality with PCA (for visualization)
   - Attaching cluster labels and summarizing clusters
 """
 
@@ -29,18 +29,6 @@ from sklearn.preprocessing import StandardScaler
 def clean_census_data(df: pd.DataFrame, selected_columns: Sequence[str]) -> pd.DataFrame:
     """
     Subset to selected columns, replace '?' with NaN, and drop rows with missing values.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Original DataFrame.
-    selected_columns : Sequence[str]
-        Columns to keep for clustering.
-
-    Returns
-    -------
-    pd.DataFrame
-        Cleaned DataFrame.
     """
     df_sub = df.loc[:, selected_columns].copy()
     df_sub.replace("?", np.nan, inplace=True)
@@ -56,40 +44,13 @@ def encode_features(
 ) -> pd.DataFrame:
     """
     One-hot encode categorical columns using pandas.get_dummies.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Cleaned DataFrame.
-    categorical_cols : Sequence[str]
-        Names of categorical columns to encode.
-    drop_first : bool, default True
-        Whether to drop the first level of each categorical variable
-        to avoid multicollinearity.
-
-    Returns
-    -------
-    pd.DataFrame
-        DataFrame with numerical and one-hot encoded categorical features.
     """
     return pd.get_dummies(df, columns=list(categorical_cols), drop_first=drop_first)
 
 
 def scale_features(X: pd.DataFrame) -> Tuple[np.ndarray, StandardScaler]:
     """
-    Standardize features to have mean 0 and variance 1.
-
-    Parameters
-    ----------
-    X : pd.DataFrame
-        Feature matrix.
-
-    Returns
-    -------
-    X_scaled : np.ndarray
-        Scaled feature matrix.
-    scaler : StandardScaler
-        Fitted scaler instance (can be reused for inverse transform or new data).
+    Standardize features to mean 0 and variance 1.
     """
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X.values)
@@ -109,25 +70,12 @@ def compute_elbow_inertia(
 ) -> List[Tuple[int, float]]:
     """
     Compute inertia values for a range of cluster counts (K) for the elbow method.
-
-    Parameters
-    ----------
-    X_scaled : np.ndarray
-        Scaled feature matrix.
-    k_values : Sequence[int]
-        Sequence of K values to evaluate.
-    random_state : int, default 42
-        Random state for KMeans reproducibility.
-    n_init : int, default 10
-        Number of time the k-means algorithm will be run with different centroid seeds.
-    max_iter : int, default 300
-        Maximum number of iterations of the k-means algorithm.
-
-    Returns
-    -------
-    List[Tuple[int, float]]
-        List of (K, inertia) pairs.
     """
+    if isinstance(X_scaled, pd.DataFrame):
+        X_scaled = X_scaled.values
+    elif not isinstance(X_scaled, np.ndarray):
+        raise TypeError("X_scaled must be a numpy array or pandas DataFrame")
+
     results = []
     for k in k_values:
         model = KMeans(
@@ -150,29 +98,11 @@ def fit_kmeans(
 ) -> KMeans:
     """
     Fit a K-Means clustering model.
-
-    Parameters
-    ----------
-    X_scaled : np.ndarray
-        Scaled feature matrix.
-    n_clusters : int
-        Number of clusters (K).
-    random_state : int, default 42
-        Random state for reproducibility.
-    n_init : int, default 10
-        Number of time the k-means algorithm will be run with different centroid seeds.
-    max_iter : int, default 300
-        Maximum number of iterations of the k-means algorithm.
-
-    Returns
-    -------
-    KMeans
-        Fitted KMeans model.
     """
     if isinstance(X_scaled, pd.DataFrame):
         X_scaled = X_scaled.values
     elif not isinstance(X_scaled, np.ndarray):
-        raise TypeError("X_scaled must be a numpy array or pandas DataFrame")    
+        raise TypeError("X_scaled must be a numpy array or pandas DataFrame")
 
     model = KMeans(
         n_clusters=n_clusters,
@@ -190,21 +120,7 @@ def fit_kmeans(
 
 def run_pca(X_scaled: np.ndarray, n_components: int = 2) -> Tuple[PCA, np.ndarray]:
     """
-    Run PCA on scaled features for visualization.
-
-    Parameters
-    ----------
-    X_scaled : np.ndarray
-        Scaled feature matrix.
-    n_components : int, default 2
-        Number of principal components.
-
-    Returns
-    -------
-    pca : PCA
-        Fitted PCA object.
-    X_pca : np.ndarray
-        Transformed data of shape (n_samples, n_components).
+    Run PCA on scaled features for visualization and exploratory analysis.
     """
     pca = PCA(n_components=n_components, random_state=42)
     X_pca = pca.fit_transform(X_scaled)
@@ -218,21 +134,10 @@ def attach_clusters(
 ) -> pd.DataFrame:
     """
     Attach cluster labels to a DataFrame.
-
-    Parameters
-    ----------
-    df : pd.DataFrame
-        Original or cleaned DataFrame with one row per observation.
-    labels : Sequence[int]
-        Cluster labels (e.g., model.labels_).
-    label_name : str, default "cluster"
-        Name of the new cluster column.
-
-    Returns
-    -------
-    pd.DataFrame
-        DataFrame with an additional cluster label column.
     """
+    if len(df) != len(labels):
+        raise ValueError("Length of labels must match number of rows in df")
+
     df_with_clusters = df.copy()
     df_with_clusters[label_name] = labels
     return df_with_clusters
@@ -245,20 +150,6 @@ def summarize_clusters(
 ) -> pd.DataFrame:
     """
     Compute summary statistics for each cluster on selected numeric columns.
-
-    Parameters
-    ----------
-    df_with_clusters : pd.DataFrame
-        DataFrame that includes a cluster column.
-    cluster_col : str
-        Name of the cluster label column.
-    numeric_cols : Sequence[str]
-        List of numeric column names to summarize.
-
-    Returns
-    -------
-    pd.DataFrame
-        Multi-index DataFrame with statistics (mean, median, count) for each cluster.
     """
     grouped = df_with_clusters.groupby(cluster_col)[list(numeric_cols)]
     summary = grouped.agg(["mean", "median", "count"])
