@@ -1,0 +1,1 @@
+from .community_detection import label_propagation_communities
