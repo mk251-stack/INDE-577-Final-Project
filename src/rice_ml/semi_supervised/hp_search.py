@@ -1,5 +1,3 @@
-# src/rice_ml/semi_supervised/hp_search.py
-
 from __future__ import annotations
 
 from itertools import product

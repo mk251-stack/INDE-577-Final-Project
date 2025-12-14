@@ -1,80 +1,66 @@
-# Semi-Supervised Learning — Label Propagation
+# Semi-Supervised Learning
 
-This module implements a **graph-based Label Propagation algorithm** for semi-supervised classification.  
-Only a small fraction of training samples need labeled class values; the remainder of the data contribute
-through the geometry of a k-nearest-neighbor (k-NN) similarity graph.
+This directory contains an implementation and example notebook for a
+**semi-supervised learning algorithm**, which learns from a combination of
+**a small labeled dataset and a large pool of unlabeled data**.
 
-## Algorithm overview
+Semi-supervised learning bridges the gap between supervised and unsupervised
+approaches by exploiting the structure of unlabeled data while still being
+guided by limited supervision. These methods are particularly useful in
+settings where labeling data is expensive or impractical at scale.
 
-Given:
-
-- Feature matrix **X** for all samples (labeled and unlabeled)
-- Label vector **y** where unlabeled points are marked as `-1`
-
-the algorithm:
-
-1. Builds a sparse **k-NN similarity graph**  
-   \[
-   w_{ij} = \exp(-\gamma\,||x_i-x_j||^2)
-   \]
-
-2. Normalizes rows of the similarity matrix to form a stochastic diffusion operator \(W\).
-
-3. Initializes a label matrix **Y₀** containing one-hot vectors for labeled samples and zeros elsewhere.
-
-4. Iteratively solves the fixed-point update
-
-\[
-F_{t+1} = \alpha W F_t + (1 - \alpha) Y_0
-\]
-
-until convergence.
-
-Final predictions correspond to `argmax(F)` over each row.
+The material in this folder demonstrates how graph-based methods can leverage
+data connectivity to extend sparse labels across a dataset.
 
 ---
 
-## Included components
+## Algorithm Included
 
-### `LabelPropagation`
+### Label Propagation (Graph-Based Semi-Supervised Learning)
+**Directory:** `Label_Propagation/`
 
-Core estimator implementing sparse graph construction, iterative diffusion,
-convergence checking, and both:
-
-- **Transductive inference**: predictions over training graph nodes  
-- **Inductive inference**: k-NN soft-vote approximation for unseen points
-
-### `make_semi_supervised_labels`
-
-Utility function that:
-
-- Keeps a fixed number of labeled samples per class
-- Assigns label `-1` to all remaining points
-
-Used to simulate low-label regimes.
-
-### `label_propagation_grid_search`
-
-Performs a grid search over
-
-- `n_neighbors`
-- `alpha`
-- `gamma`
-
-Tracking convergence, runtime, and inductive test accuracy.
+- Graph-based semi-supervised algorithm that propagates labels across a
+  similarity graph.
+- Uses both labeled and unlabeled samples during training.
+- Primarily **transductive**, with limited inductive generalization.
+- Demonstrated on the **Fashion-MNIST** image dataset using a k-NN graph.
+- Includes:
+  - Construction of a sparse k-NN similarity graph
+  - Semi-supervised label masking with a controlled number of labeled samples per class
+  - Evaluation of transductive and inductive performance
+  - Comparison with a supervised Logistic Regression baseline
+  - Sensitivity analysis with respect to the number of labeled samples
+  - Hyperparameter analysis and PCA visualization
 
 ---
 
-## Typical usage
+## Project Structure
 
-```python
-from rice_ml.semi_supervised import LabelPropagation
-from rice_ml.semi_supervised.utils import make_semi_supervised_labels
+The semi-supervised learning section follows the same structure as the other
+learning paradigms in this repository:
 
-y_semi, _, _ = make_semi_supervised_labels(y, n_labeled_per_class=10)
+- `examples/Semi_Supervised/Label_Propagation/`
+  - `Label_Propagation_final.ipynb` — fully documented example notebook
+  - `README.md` — algorithm-specific explanation, evaluation, and conclusions
+- Reusable implementation code lives in:
+  `src/rice_ml/semi_supervised/`
+- Unit tests for the core components are located in:
+  `tests/unit/`
 
-lp = LabelPropagation(n_neighbors=10, alpha=0.90)
-lp.fit(X, y_semi)
+This separation ensures that:
+- Core algorithm logic is reusable and testable
+- Notebooks focus on explanation, visualization, and interpretation
+- The codebase remains consistent across learning paradigms
 
-y_graph = lp.predict()     # Transductive
-y_test  = lp.predict(X_test)  # Inductive
+---
+
+## Relationship to Other Modules
+
+The semi-supervised learning section complements:
+
+- **Supervised Learning** — where models rely entirely on labeled data
+- **Unsupervised Learning** — where no labels are used during training
+
+Together, these sections illustrate how learning strategies evolve as the
+availability of labeled data changes, and how unlabeled data can be exploited
+to improve performance in low-label regimes.
