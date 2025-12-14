@@ -73,7 +73,7 @@ Key findings:
 - No missing values detected.
 EDA visualizations include:
 - Histograms for numeric features
-- Bar charts for the top 20 categories
+- Bar charts for the top 20 cat.
 - Correlation heatmap
 
 ## 6. Model Development
