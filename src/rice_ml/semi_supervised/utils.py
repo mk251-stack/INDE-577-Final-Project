@@ -1,9 +1,5 @@
-# src/rice_ml/semi_supervised/utils.py
-
 from __future__ import annotations
-
 from typing import Tuple
-
 import numpy as np
 
 

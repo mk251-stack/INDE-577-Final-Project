@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from rice_ml.semi_supervised.label_propagation import LabelPropagation
 from rice_ml.semi_supervised.utils import make_semi_supervised_labels
@@ -59,7 +60,7 @@ def test_label_propagation_fit_and_transductive_predict():
     # Predictions only from known classes
     assert set(np.unique(preds)).issubset(set(np.unique(y)))
 
-    # Ensure we converged
+    # Ensure at least one iteration was executed
     assert lp.n_iter_ > 0
 
 
@@ -82,7 +83,6 @@ def test_label_propagation_inductive_predict():
 
 def test_grid_search_smoke():
     X, y = create_simple_dataset()
-    y_semi, _, _ = make_semi_supervised_labels(y, 3)
 
     results = label_propagation_grid_search(
         X_graph=X,
@@ -100,3 +100,56 @@ def test_grid_search_smoke():
 
     assert len(results) == 1
     assert "test_acc" in results.columns
+
+
+def test_label_propagation_requires_labeled_data():
+    """
+    LabelPropagation should raise an error if no labeled samples are provided.
+    """
+    X = np.random.randn(20, 2)
+    y = np.full(20, -1)  # all unlabeled
+
+    lp = LabelPropagation(n_neighbors=3)
+
+    with pytest.raises(ValueError):
+        lp.fit(X, y)
+
+
+def test_label_propagation_deterministic():
+    """
+    Fitting LabelPropagation twice with the same data should
+    produce identical transductive predictions.
+    """
+    X, y = create_simple_dataset()
+    y_semi, _, _ = make_semi_supervised_labels(
+        y, n_labeled_per_class=3, random_state=42
+    )
+
+    lp1 = LabelPropagation(n_neighbors=5, alpha=0.9)
+    lp2 = LabelPropagation(n_neighbors=5, alpha=0.9)
+
+    lp1.fit(X, y_semi)
+    lp2.fit(X, y_semi)
+
+    preds1 = lp1.predict()
+    preds2 = lp2.predict()
+
+    assert np.array_equal(preds1, preds2)
+
+
+def test_labeled_points_are_respected():
+    """
+    Labeled points should retain their original labels
+    after propagation.
+    """
+    X, y = create_simple_dataset()
+    y_semi, labeled_mask, _ = make_semi_supervised_labels(
+        y, n_labeled_per_class=3, random_state=0
+    )
+
+    lp = LabelPropagation(n_neighbors=5, alpha=0.9)
+    lp.fit(X, y_semi)
+
+    preds = lp.predict()
+
+    assert np.all(preds[labeled_mask] == y[labeled_mask])
