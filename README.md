@@ -1,20 +1,28 @@
-# INDE 577 Data Science & Machine Learning Final Project
+# INDE 577 Data Science & Machine Learning – Final Project
 
-A teaching-focused Python package that implements core machine learning
-building blocks (preprocessing, models, evaluation) from scratch using
-NumPy, Pandas, and Matplotlib. The goal is to provide clear, dependency-light
-examples for students in INDE 577.
+This repository contains a teaching-focused Python package that implements
+core machine learning algorithms and utilities from scratch using NumPy,
+Pandas, and Matplotlib. The project emphasizes clarity, minimal abstraction,
+and explicit implementations to support learning and experimentation.
+
+The package is accompanied by example notebooks covering supervised,
+unsupervised, and semi-supervised learning methods, and is intended for use
+in the INDE 577 Data Science & Machine Learning course.
+
+---
 
 ## Installation
 
 Create and activate a virtual environment, then install the project in editable
-mode with the development tools:
+mode with development tools:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 pip install -e .[dev]
 ```
+
+
 
 ## Quickstart
 
@@ -34,12 +42,16 @@ print(predictions)
 
 ## Project layout
 
-- `src/rice_ml/`: Package source code
-  - `supervised_learning/`: Models such as k-NN, linear regression, and decision trees
-  - `preprocessing/`: Scaling, imputation, and preprocessing utilities
-  - `post_processing/`: Analysis helpers
-- `tests/`: Pytest-based unit tests
-- `examples/`: Example notebooks and scripts
+- `src/rice_ml/`: Core package source code
+  - `processing/` — Scaling, imputation, and preprocessing utilities  
+  - `supervised_learning/` — Supervised models (e.g., regression, k-NN, trees, ensembles)  
+  - `unsupervised_learning/` — Clustering, PCA, and related methods  
+  - `semi_supervised/` — Semi-supervised learning algorithms (e.g., label propagation)  
+  - `visualization/` — Plotting and diagnostic helpers  
+  - `utils/` — Shared helper functions
+- `tests/`: Pytest-based unit tests for core functionality
+- `examples/`: Jupyter notebooks demonstrating algorithms and workflows  
+- `datasets/` — Small curated datasets and dataset documentation  
 
 ## Running tests
 
@@ -47,14 +59,13 @@ There are two supported ways to run the unit test suite.
 
 ### Option 1 — Editable install (recommended when internet access is available)
 
-    python -m pip install -e .[dev]
+    pip install -e .[dev]
     pytest
 
 ### Option 2 — Direct source execution (offline / restricted environments)
 
-If your environment cannot fetch build dependencies during installation
-(e.g., missing network access for setuptools wheels), you can run tests
-directly against the source tree:
+If editable installation is not possible (for example, restricted network
+access), tests can be run directly against the source tree:
 
     PYTHONPATH=src pytest
 

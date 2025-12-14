@@ -8,11 +8,13 @@ from rice_ml.unsupervised_learning.community_detection import (
 
 
 def test_validate_adjacency_requires_square_matrix():
+    """Non-square matrices should be rejected."""
     with pytest.raises(ValueError, match="square"):
         _validate_adjacency(np.ones((2, 3)))
 
 
 def test_validate_adjacency_rejects_negative_weights():
+    """Adjacency matrices with negative values are invalid."""
     with pytest.raises(ValueError, match="nonnegative"):
         _validate_adjacency(np.array([[0.0, -1.0], [1.0, 0.0]]))
 
@@ -33,15 +35,14 @@ def test_label_propagation_discovers_two_clusters():
     a_labels = set(labels[:3])
     b_labels = set(labels[3:])
 
-    # Each cluster should have a single label, and the labels should differ
     assert len(a_labels) == len(b_labels) == 1
     assert a_labels != b_labels
 
 
 def test_label_propagation_is_reproducible_with_fixed_seed():
     """
-    With a fixed random seed, label propagation should be reproducible even when
-    random tie-breaking is enabled.
+    With a fixed random seed, label propagation should be reproducible
+    even when random tie-breaking is enabled.
     """
     adjacency = np.array(
         [
@@ -67,8 +68,8 @@ def test_isolated_nodes_keep_unique_labels_after_relabeling():
 
     labels = label_propagation_communities(adjacency, shuffle=False)
 
-    # No edges -> no propagation; relabeling should return 0, 1, 2
     assert np.array_equal(labels, np.arange(3))
+
 
 def test_output_shape_and_type():
     """
@@ -92,3 +93,14 @@ def test_fully_connected_graph_forms_single_community():
     labels = label_propagation_communities(adjacency, shuffle=False)
 
     assert len(set(labels)) == 1
+
+
+def test_single_node_graph():
+    """
+    A single-node graph should return a single community.
+    """
+    adjacency = np.array([[0.0]])
+    labels = label_propagation_communities(adjacency)
+
+    assert np.array_equal(labels, np.array([0]))
+

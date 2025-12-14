@@ -3,13 +3,13 @@ import pandas as pd
 import pytest
 
 from rice_ml.unsupervised_learning.dbscan import (
-    load_dataset,
     select_numeric,
     scale_features,
     compute_k_distance,
     run_dbscan,
     add_cluster_labels,
 )
+
 
 # --------------------------------------------------
 # Fixtures
@@ -27,7 +27,7 @@ def sample_dataframe():
 
 @pytest.fixture
 def numeric_dataframe(sample_dataframe):
-    """Return only numeric columns."""
+    """Return numeric-only dataframe."""
     return select_numeric(sample_dataframe)
 
 
@@ -53,7 +53,6 @@ def test_scale_features_output_shape(numeric_dataframe):
 def test_scale_features_mean_close_to_zero(numeric_dataframe):
     scaled = scale_features(numeric_dataframe)
 
-    # Mean of scaled features should be ~0
     assert np.allclose(scaled.mean(axis=0), 0, atol=1e-7)
 
 
@@ -64,6 +63,13 @@ def test_compute_k_distance_returns_sorted_array(numeric_dataframe):
     assert isinstance(distances, np.ndarray)
     assert distances.ndim == 1
     assert np.all(distances[:-1] <= distances[1:])
+
+
+def test_compute_k_distance_rejects_invalid_k(numeric_dataframe):
+    scaled = scale_features(numeric_dataframe)
+
+    with pytest.raises(ValueError):
+        compute_k_distance(scaled, k=0)
 
 
 def test_run_dbscan_returns_labels(numeric_dataframe):
@@ -92,6 +98,22 @@ def test_run_dbscan_noise_label_exists():
     assert -1 in labels
 
 
+def test_run_dbscan_detects_multiple_clusters():
+    data = np.array([
+        [0.0, 0.0],
+        [0.1, 0.1],
+        [5.0, 5.0],
+        [5.1, 5.1],
+    ])
+
+    labels = run_dbscan(data, eps=0.3, min_samples=2)
+
+    unique_clusters = set(labels)
+    unique_clusters.discard(-1)
+
+    assert len(unique_clusters) >= 2
+
+
 def test_add_cluster_labels_adds_column(numeric_dataframe):
     scaled = scale_features(numeric_dataframe)
     labels = run_dbscan(scaled, eps=1.5, min_samples=2)
@@ -108,5 +130,4 @@ def test_add_cluster_labels_does_not_modify_original_df(numeric_dataframe):
 
     _ = add_cluster_labels(numeric_dataframe, labels)
 
-    # Original dataframe should not have 'cluster'
     assert "cluster" not in numeric_dataframe.columns

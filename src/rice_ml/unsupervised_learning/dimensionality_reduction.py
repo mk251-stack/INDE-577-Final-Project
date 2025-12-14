@@ -33,7 +33,10 @@ def load_energy_data(path: str) -> pd.DataFrame:
 
 def select_numeric_features(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Select only numerical columns for PCA.
+    Select numeric columns suitable for PCA.
+
+    Only float64 and int64 columns are retained. Categorical and
+    non-numeric columns are excluded.
 
     Parameters
     ----------
@@ -79,32 +82,69 @@ def run_energy_pca(
     random_state: int = 42
 ) -> Tuple[PCA, np.ndarray]:
     """
-    Fit and transform data using PCA.
+    Fit Principal Component Analysis (PCA) on a scaled feature matrix and
+    return the reduced representation.
+
+    This function assumes that input features have already been standardized
+    (zero mean, unit variance). PCA is applied to identify orthogonal directions
+    of maximum variance and project the data into a lower-dimensional space.
 
     Parameters
     ----------
     X_scaled : np.ndarray
-        Scaled feature matrix.
-    n_components : int, default 2
-        Number of PCA dimensions to reduce to.
-    random_state : int, default 42
-        Random seed for reproducibility.
+        Scaled feature matrix of shape (n_samples, n_features).
+        Must be a 2D NumPy array containing only numeric values.
+    n_components : int, default=2
+        Number of principal components to retain.
+    random_state : int, default=42
+        Random seed used by the PCA solver for reproducibility.
 
     Returns
     -------
-    PCA
-        Fitted PCA model.
-    np.ndarray
-        Reduced data matrix of shape (n_samples, n_components)
+    pca : sklearn.decomposition.PCA
+        Fitted PCA model containing components, explained variance ratios,
+        and other PCA attributes.
+    X_pca : np.ndarray
+        PCA-reduced data matrix of shape (n_samples, n_components).
+
+    Raises
+    ------
+    ValueError
+        If X_scaled is not a NumPy array.
+    ValueError
+        If X_scaled is not a 2D array.
+    ValueError
+        If X_scaled contains non-numeric values.
     """
+
+    # ----------------------------
+    # Input validation
+    # ----------------------------
+    if not isinstance(X_scaled, np.ndarray):
+        raise ValueError("X_scaled must be a NumPy array.")
+
+    if X_scaled.ndim != 2:
+        raise ValueError(
+            "X_scaled must be a 2D array of shape (n_samples, n_features)."
+        )
+
+    if not np.issubdtype(X_scaled.dtype, np.number):
+        raise ValueError("X_scaled must contain only numeric values.")
+
+    # ----------------------------
+    # PCA fitting and transformation
+    # ----------------------------
     pca = PCA(n_components=n_components, random_state=random_state)
     X_pca = pca.fit_transform(X_scaled)
+
     return pca, X_pca
 
 
 def get_pca_variance(pca: PCA) -> List[Tuple[str, float]]:
     """
-    Return explained variance ratio of PCA components.
+    Return explained variance ratio for each principal component.
+
+    Intended for reporting and interpretability purposes.
 
     Parameters
     ----------
@@ -113,7 +153,8 @@ def get_pca_variance(pca: PCA) -> List[Tuple[str, float]]:
 
     Returns
     -------
-    List of (component_name, variance_ratio) pairs
+    list of (str, float)
+        (component_name, explained_variance_ratio) pairs.
     """
     return [(f"PC{i+1}", var) for i, var in enumerate(pca.explained_variance_ratio_)]
 
@@ -124,7 +165,7 @@ def get_pca_variance(pca: PCA) -> List[Tuple[str, float]]:
 
 def create_pca_dataframe(X_pca: np.ndarray) -> pd.DataFrame:
     """
-    Convert PCA output matrix into a DataFrame with PC labels.
+    Convert PCA output matrix into a DataFrame with labeled columns.
 
     Parameters
     ----------
@@ -144,6 +185,9 @@ def create_pca_dataframe(X_pca: np.ndarray) -> pd.DataFrame:
 def save_reduced_data(df_pca: pd.DataFrame, output_path: str) -> None:
     """
     Save PCA-reduced DataFrame to CSV for reuse.
+
+    This function is useful for persisting reduced representations
+    for downstream tasks such as clustering or anomaly detection.
 
     Parameters
     ----------

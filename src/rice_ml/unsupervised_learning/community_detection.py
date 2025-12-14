@@ -1,12 +1,13 @@
 """
 Community Detection via Unsupervised Label Propagation (LPA).
 
-This is an UNSUPERVISED algorithm:
+This module implements an UNSUPERVISED graph-based community detection algorithm:
 - No labels are provided or clamped.
 - Each node starts with a unique label.
-- Labels iteratively update to match the most common neighbor label.
+- Labels iteratively update to match the most frequent neighbor label
+  (weighted by edge strength).
 
-Output: an integer community label per node.
+The output is an integer community label per node.
 """
 
 from __future__ import annotations
@@ -15,12 +16,33 @@ import numpy as np
 
 
 def _validate_adjacency(A: np.ndarray) -> np.ndarray:
+    """
+    Validate and sanitize an adjacency matrix.
+
+    Parameters
+    ----------
+    A : np.ndarray
+        Candidate adjacency matrix.
+
+    Returns
+    -------
+    np.ndarray
+        Validated adjacency matrix cast to float.
+
+    Raises
+    ------
+    ValueError
+        If the matrix is not square or contains negative values.
+    """
     A = np.asarray(A)
+
     if A.ndim != 2 or A.shape[0] != A.shape[1]:
         raise ValueError("A must be a square (n x n) adjacency matrix.")
+
     if np.any(A < 0):
         raise ValueError("A must be nonnegative.")
-    # Zero diagonal is typical, but don't force it.
+
+    # Zero diagonal is typical but not enforced
     return A.astype(float)
 
 
@@ -31,23 +53,31 @@ def label_propagation_communities(
     shuffle: bool = True,
 ) -> np.ndarray:
     """
-    Unsupervised Label Propagation for community detection.
+    Perform unsupervised label propagation for community detection.
 
-    Args:
-        A: (n, n) adjacency matrix (weighted or unweighted). Larger = stronger tie.
-        max_iter: maximum number of passes over nodes.
-        seed: RNG seed used only for update order shuffling / tie-breaking.
-        shuffle: whether to randomize update order each iteration (recommended).
+    Parameters
+    ----------
+    A : np.ndarray
+        Square (n, n) adjacency matrix representing a similarity graph.
+        Edge weights must be nonnegative; larger values indicate stronger ties.
+    max_iter : int, default 200
+        Maximum number of full passes over all nodes.
+    seed : int or None, default 42
+        Random seed used for update order shuffling and tie-breaking.
+    shuffle : bool, default True
+        Whether to randomize node update order at each iteration.
 
-    Returns:
-        labels: (n,) integer community label for each node.
+    Returns
+    -------
+    np.ndarray
+        One-dimensional array of length n containing integer community
+        labels for each node, relabeled to the range 0..k-1.
     """
     A = _validate_adjacency(A)
     n = A.shape[0]
 
-    # Start with a unique label per node
+    # Initialize with a unique label per node
     labels = np.arange(n, dtype=int)
-
     rng = np.random.default_rng(seed)
 
     for _ in range(max_iter):
@@ -58,7 +88,7 @@ def label_propagation_communities(
             rng.shuffle(order)
 
         for i in order:
-            # neighbors are nodes with positive edge weight
+            # Neighbors are nodes with positive edge weight
             neighbors = np.flatnonzero(A[i] > 0)
             if neighbors.size == 0:
                 continue
@@ -66,16 +96,17 @@ def label_propagation_communities(
             neighbor_labels = labels[neighbors]
             neighbor_weights = A[i, neighbors]
 
-            # Weighted vote: sum weights per label
-            unique = np.unique(neighbor_labels)
-            scores = np.zeros(unique.shape[0], dtype=float)
-            for idx, lab in enumerate(unique):
+            # Weighted vote: sum edge weights per label
+            unique_labels = np.unique(neighbor_labels)
+            scores = np.zeros(unique_labels.shape[0], dtype=float)
+
+            for idx, lab in enumerate(unique_labels):
                 scores[idx] = neighbor_weights[neighbor_labels == lab].sum()
 
             best_score = scores.max()
-            best_labels = unique[scores == best_score]
+            best_labels = unique_labels[scores == best_score]
 
-            # Tie-break randomly among best labels
+            # Random tie-breaking among best labels
             new_label = int(rng.choice(best_labels))
 
             if new_label != labels[i]:
@@ -85,6 +116,7 @@ def label_propagation_communities(
         if not changed:
             break
 
-    # Relabel communities to 0..k-1 for neatness
+    # Relabel communities to contiguous integers 0..k-1
     _, relabeled = np.unique(labels, return_inverse=True)
     return relabeled
+

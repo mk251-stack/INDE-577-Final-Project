@@ -1,39 +1,68 @@
 [build-system]
-requires = ["setuptools>=69", "wheel"]
+requires = ["setuptools>=65.5", "wheel"]
 build-backend = "setuptools.build_meta"
+
 
 [project]
 name = "rice_ml"
 version = "0.1.0"
-description = "An example Python project"
+description = "A teaching-focused machine learning package implementing core algorithms from scratch using NumPy."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+
 authors = [
   { name = "Maria Konortoff", email = "mk251@rice.edu" },
   { name = "Diego Jimenez Vivaldi", email = "dj70@rice.edu" },
   { name = "Alan Salceda", email = "as555@rice.edu" },
   { name = "Mrtunjay Gupta", email = "mg227@rice.edu" }
 ]
-readme = "README.md"
-license = { text = "MIT" }
-requires-python = ">=3.9"
-dependencies = [
-    "numpy",
-    "matplotlib",
-    "seaborn",
-    "pandas",
-    "scipy",
-    "scikit-learn",
-    "statsmodels",
+
+keywords = [
+  "machine-learning",
+  "data-science",
+  "education",
+  "from-scratch",
+  "supervised-learning",
+  "unsupervised-learning",
+  "semi-supervised-learning"
 ]
 
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Education",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11"
+]
+
+dependencies = [
+  "numpy",
+  "pandas",
+  "matplotlib",
+  "scipy",
+  "scikit-learn",
+  "statsmodels"
+]
+
+
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = [
+  "pytest"
+]
+
 
 [tool.setuptools]
 package-dir = { "" = "src" }
 
+
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["rice_ml", "data"]
+include = ["rice_ml*"]
+
 
 [tool.pytest.ini_options]
 minversion = "6.0"

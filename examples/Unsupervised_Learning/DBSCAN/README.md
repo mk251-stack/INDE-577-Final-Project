@@ -1,84 +1,96 @@
-# 📘 DBSCAN Clustering on Energy Dataset (with PCA Optimization)
+# DBSCAN Clustering
 
-This project applies **DBSCAN clustering** to an energy consumption dataset using a workflow optimized for **large datasets**.  
-Because DBSCAN performs poorly on high-dimensional data, this project integrates **Incremental PCA**, **feature scaling**, and **memory-safe subsampling** to reliably extract meaningful clusters without running into memory errors.
-
----
-
-## ⭐ Project Goals
-- Identify natural consumption patterns within the energy dataset.
-- Detect anomalies or irregular energy behaviors using DBSCAN.
-- Overcome memory limitations and computational bottlenecks using PCA and subsampling.
-- Visualize clusters clearly in a reduced 2D PCA space.
+This directory contains example code and analysis for **DBSCAN (Density-Based Spatial Clustering of Applications with Noise)** applied to an energy dataset.  
+The workflow is designed to handle **large, high-dimensional datasets** through dimensionality reduction, feature scaling, and memory-aware preprocessing.
 
 ---
 
-## 🔧 Methods Used
+## Algorithm
 
-### **1. Data Preprocessing**
-- Selected only numeric features (DBSCAN requires continuous values).
-- Standardized all variables using `StandardScaler`.
-- Subsampled **50,000 rows** to prevent RAM overflow.
-- Performed manual memory cleanup using Python's `gc` module.
+DBSCAN is an **unsupervised, density-based clustering algorithm** that groups observations based on local neighborhood density rather than centroid distance.  
+Key characteristics:
 
-### **2. Dimensionality Reduction (PCA)**
-Implemented **Incremental PCA** (`n_components=2`) to:
-- Handle large datasets efficiently.
-- Reduce dimensionality to reveal density-based structure.
-- Enable 2D visualization of clusters.
+- Does **not** require specifying the number of clusters in advance
+- Can discover **arbitrarily shaped clusters**
+- Explicitly identifies **noise and outliers**
+- Sensitive to feature scale and dimensionality
 
-### **3. DBSCAN Clustering**
-- Ran DBSCAN on PCA-transformed and rescaled data.
-- Used a **k-distance plot** to guide selection of `eps`.
-- Found the most stable clustering at  
-  **eps = 0.18**, **min_samples = 10**
-- DBSCAN produced:
-  - **3 major clusters**
-  - Several small clusters
-  - A small number of noise points (`cluster = -1`)
+Core hyperparameters:
+- `eps`: neighborhood radius
+- `min_samples`: minimum number of points required to form a dense region
 
 ---
 
-## 📊 Key Findings
+## Data
 
-- DBSCAN on the raw dataset produced only one cluster → not meaningful.
-- After PCA + scaling, DBSCAN successfully identified **distinct density regions**.
-- The algorithm revealed:
-  - One **dominant cluster** representing typical energy behavior.
-  - Several **smaller, unique clusters** representing less common patterns.
-  - **Noise points** marking outlier or anomalous observations.
-- PCA was essential for enabling DBSCAN to detect meaningful structure.
+- **Dataset**: `datasets/energy.csv`
+- Observations represent energy production measurements across time and categories.
+- Only **numeric features** are used, as DBSCAN relies on continuous distance metrics.
 
----
-
-## 📁 Notebook Features
-The included notebook contains:
-- Full preprocessing pipeline  
-- PCA reduction (Incremental PCA)  
-- Memory-optimized workflow  
-- k-distance visualization  
-- Hyperparameter tuning (`eps`)  
-- Final DBSCAN clustering  
-- Cluster visualization  
-- Summary statistics  
-- Final conclusion section  
+Preprocessing steps:
+- Selection of numeric columns only
+- Standardization using `StandardScaler`
+- Random subsampling of **50,000 observations** to ensure computational feasibility
+- Explicit memory cleanup using Python’s `gc` module
 
 ---
 
-## ✅ Conclusion
-DBSCAN, when applied directly to the high-dimensional energy dataset, was unable to form meaningful clusters.  
-However, by integrating **PCA**, **standard scaling**, and **careful hyperparameter tuning**, DBSCAN was able to reveal several distinct patterns of energy usage and identify outliers.
+## Dimensionality Reduction
 
-This project demonstrates that **DBSCAN becomes a powerful clustering tool once dimensionality and scale are properly controlled**, especially on large real-world datasets.
+Because DBSCAN performs poorly in high-dimensional spaces, **Incremental PCA** is applied prior to clustering.
+
+PCA is used to:
+- Reduce dimensionality to two components
+- Preserve dominant variance structure
+- Enable reliable density estimation
+- Support 2D visualization
+
+Incremental PCA is chosen specifically to accommodate large datasets without exhausting memory.
 
 ---
 
-## 📬 Contact / Notes
-If you'd like to extend this project with:
-- K-Means comparison  
-- Silhouette scoring  
-- Auto-tuned eps selection  
-- Saving cluster outputs to CSV  
+## Clustering Procedure
 
-Just let me know!
+1. Scale numeric features
+2. Apply Incremental PCA (`n_components = 2`)
+3. Rescale PCA outputs
+4. Use a **k-distance plot** to guide selection of `eps`
+5. Run DBSCAN with tuned hyperparameters
 
+Final configuration:
+- `eps = 0.18`
+- `min_samples = 10`
+
+---
+
+## Results & Interpretation
+
+- DBSCAN identifies:
+  - One **dominant dense cluster** representing typical energy behavior
+  - Several **smaller clusters** corresponding to less frequent patterns
+  - A set of **noise points** (`label = -1`) indicating anomalous or sparse observations
+- Applying DBSCAN directly to the full high-dimensional feature space yields limited structure, highlighting the importance of dimensionality reduction.
+- PCA enables DBSCAN to operate effectively by mitigating the curse of dimensionality.
+
+These results demonstrate DBSCAN’s strength in identifying **density-based structure and outliers**, rather than producing balanced or spherical clusters.
+
+---
+
+## Notebook Contents
+
+The accompanying notebook includes:
+- Data loading and numeric feature selection
+- Feature scaling and memory optimization
+- Incremental PCA reduction
+- k-distance visualization for parameter tuning
+- DBSCAN clustering
+- Cluster labeling and visualization
+- Interpretation of clusters and noise points
+- Final conclusions
+
+---
+
+## Summary
+
+This example illustrates how DBSCAN can be effectively applied to large real-world datasets when combined with appropriate preprocessing.  
+By controlling feature scale and dimensionality, DBSCAN reveals meaningful density-based structure and highlights anomalous behavior that centroid-based methods may overlook.

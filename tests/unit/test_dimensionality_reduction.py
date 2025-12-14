@@ -1,12 +1,14 @@
 import numpy as np
 import pandas as pd
 import pytest
+
 from rice_ml.unsupervised_learning.dimensionality_reduction import (
     load_energy_data,
     select_numeric_features,
     scale_energy_features,
     run_energy_pca,
-    create_pca_dataframe
+    create_pca_dataframe,
+    get_pca_variance,
 )
 
 
@@ -22,23 +24,23 @@ def test_pca_runs_and_returns_components():
         [4.1, 5.1, 6.1]
     ])
 
-    # Simulate scaling
     from sklearn.preprocessing import StandardScaler
     X_scaled = StandardScaler().fit_transform(X)
 
     pca, X_pca = run_energy_pca(X_scaled, n_components=2)
 
-    assert X_pca.shape[1] == 2
+    assert X_pca.shape == (4, 2)
     assert hasattr(pca, "components_")
     assert pca.components_.shape == (2, 3)
 
 
 def test_pca_explained_variance_is_valid():
     X = np.random.rand(50, 5)
+
     from sklearn.preprocessing import StandardScaler
     X_scaled = StandardScaler().fit_transform(X)
 
-    pca, X_pca = run_energy_pca(X_scaled, 3)
+    pca, _ = run_energy_pca(X_scaled, 3)
 
     evr = pca.explained_variance_ratio_
     assert len(evr) == 3
@@ -48,15 +50,16 @@ def test_pca_explained_variance_is_valid():
 
 def test_pca_dataframe_output_format():
     X = np.random.rand(20, 4)
+
     from sklearn.preprocessing import StandardScaler
     X_scaled = StandardScaler().fit_transform(X)
 
-    pca, X_pca = run_energy_pca(X_scaled, 3)
+    _, X_pca = run_energy_pca(X_scaled, 3)
     df_pca = create_pca_dataframe(X_pca)
 
     assert isinstance(df_pca, pd.DataFrame)
     assert df_pca.shape == (20, 3)
-    assert all(col in df_pca.columns for col in ["PC1", "PC2", "PC3"])
+    assert list(df_pca.columns) == ["PC1", "PC2", "PC3"]
 
 
 # ----------------------------
@@ -64,7 +67,7 @@ def test_pca_dataframe_output_format():
 # ----------------------------
 
 def test_pca_rejects_non_array_input():
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         run_energy_pca("not-an-array", 2)
 
 
@@ -74,31 +77,62 @@ def test_pca_requires_numeric_values():
         "B": [3, 4, 5]
     })
 
-    # Should drop column A and keep only numeric column B
     numeric_df = select_numeric_features(df)
     assert list(numeric_df.columns) == ["B"]
 
-    # Scaling should work on remaining numeric data
     X_scaled, _ = scale_energy_features(numeric_df)
     assert X_scaled.shape == (3, 1)
 
+
 # ----------------------------
-# PCA — Behavior tests
+# PCA — Behavioral tests
 # ----------------------------
 
 def test_pca_captures_separation_in_variance():
-    # Two distinct groups in 5D space
-    group1 = np.random.normal(0, 0.1, (50, 5))
-    group2 = np.random.normal(5, 0.1, (50, 5))
+    rng = np.random.default_rng(42)
+
+    group1 = rng.normal(0, 0.1, (50, 5))
+    group2 = rng.normal(5, 0.1, (50, 5))
     X = np.vstack([group1, group2])
 
     from sklearn.preprocessing import StandardScaler
     X_scaled = StandardScaler().fit_transform(X)
 
-    pca, X_pca = run_energy_pca(X_scaled, 1)
+    _, X_pca = run_energy_pca(X_scaled, 1)
 
-    # PC1 should strongly separate the two clusters
-    pc1_values = X_pca[:, 0]
-    diff = np.abs(np.mean(pc1_values[:50]) - np.mean(pc1_values[50:]))
+    pc1 = X_pca[:, 0]
+    diff = abs(pc1[:50].mean() - pc1[50:].mean())
 
-    assert diff > 3.0  # large separation in projected 1D space
+    assert diff > 3.0
+
+
+def test_pca_is_deterministic_given_seed():
+    X = np.random.rand(30, 4)
+
+    from sklearn.preprocessing import StandardScaler
+    X_scaled = StandardScaler().fit_transform(X)
+
+    _, X1 = run_energy_pca(X_scaled, 2, random_state=42)
+    _, X2 = run_energy_pca(X_scaled, 2, random_state=42)
+
+    assert np.allclose(X1, X2)
+
+
+# ----------------------------
+# PCA — Utility function tests
+# ----------------------------
+
+def test_get_pca_variance_matches_explained_variance():
+    X = np.random.rand(20, 3)
+
+    from sklearn.preprocessing import StandardScaler
+    X_scaled = StandardScaler().fit_transform(X)
+
+    pca, _ = run_energy_pca(X_scaled, 2)
+    variance = get_pca_variance(pca)
+
+    assert len(variance) == 2
+    assert variance[0][0] == "PC1"
+    assert variance[1][0] == "PC2"
+    assert np.isclose(variance[0][1], pca.explained_variance_ratio_[0])
+    assert np.isclose(variance[1][1], pca.explained_variance_ratio_[1])

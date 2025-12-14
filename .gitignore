@@ -1,4 +1,6 @@
-# Byte-compiled / optimized / DLL files
+# =====================================================
+# Python / Byte-compiled files
+# =====================================================
 __pycache__/
 *.py[cod]
 *$py.class
@@ -6,7 +8,10 @@ __pycache__/
 # C extensions
 *.so
 
+
+# =====================================================
 # Virtual environments
+# =====================================================
 .venv/
 venv/
 env/
@@ -14,7 +19,10 @@ ENV/
 *.env
 *.venv
 
+
+# =====================================================
 # Distribution / packaging
+# =====================================================
 .Python
 build/
 develop-eggs/
@@ -31,11 +39,17 @@ var/
 .installed.cfg
 *.egg
 
+
+# =====================================================
 # Installer logs
+# =====================================================
 pip-log.txt
 pip-delete-this-directory.txt
 
+
+# =====================================================
 # Unit test / coverage reports
+# =====================================================
 .coverage
 .coverage.*
 .cache
@@ -45,44 +59,46 @@ coverage.xml
 *.py,cover
 htmlcov/
 
-# Pytest cache
-.pytest_cache/
 
-# MyPy / type checker
+# =====================================================
+# Pytest / type checker / lint caches
+# =====================================================
+.pytest_cache/
 .mypy_cache/
 .dmypy.json
 dmypy.json
-
-# Ruff / lint cache
 .ruff_cache/
 
-# Jupyter Notebook checkpoints
+
+# =====================================================
+# Jupyter Notebook artifacts
+# =====================================================
 .ipynb_checkpoints
 **/*.ipynb_checkpoints
-
-# nbconvert output image folders
 *_files/
 
-# VS Code
-.vscode/
 
-# MacOS / Windows system files
+# =====================================================
+# IDE / OS files
+# =====================================================
+.vscode/
+.idea/
+*.iml
 .DS_Store
 Thumbs.db
 
-# Local IDE / project settings
-.idea/
-*.iml
 
-# Model files (very large, should never be committed)
+# =====================================================
+# Model files (large, should not be committed)
+# =====================================================
 *.pkl
 *.joblib
 models/
 
-# Prevent accidentally committing intermediate notebook output
-**/*.ipynb_checkpoints
 
-# Ignore raw dataset formats commonly >100 MB
+# =====================================================
+# Raw dataset formats (ignored by default)
+# =====================================================
 *.csv
 *.tsv
 *.zip
@@ -90,31 +106,30 @@ models/
 *.tar
 *.tar.gz
 *.rar
-
-# Ignore numpy and pickle dataset dumps
 *.npy
 *.npz
-*.pkl
 *.pickle
-
-# Ignore raw torch/tf dataset files except Fashion-MNIST idx
-# (which is safe and small)
 *.pt
 *.pth
 *.h5
 *.hdf5
 
-# Allowlist Fashion-MNIST IDX files
-!datasets/FashionMNIST/raw/*idx*
 
-# Ignore any file larger than 10 MB (git attribute)
-*.big
-
-# Optional: ignore anything inside datasets/ except small allowed files
+# =====================================================
+# Datasets directory rules
+# =====================================================
+# Ignore everything in datasets by default
 datasets/*
 
-# Allowlist for curated small datasets
+# Allowlist: curated small datasets
 !datasets/BostonHousing.csv
 !datasets/UCI_Credit_Card.csv
+!datasets/energy.csv
+
+# Allowlist: Fashion-MNIST (small binary IDX files)
 !datasets/FashionMNIST/**
-*_files/
+!datasets/FashionMNIST/raw/*idx*
+
+# Allow documentation and reproducibility scripts
+!datasets/README.md
+!datasets/merge.py

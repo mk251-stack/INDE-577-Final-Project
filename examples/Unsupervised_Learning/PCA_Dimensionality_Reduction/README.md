@@ -56,9 +56,19 @@ Together, these components explain:
 
 This indicates the reduced 3-dimensional representation preserves nearly all important information.
 
-### Reconstruction Error (Optional Metric)
-A reconstruction error metric was computed by projecting PCA-reduced data back into feature space.  
-A low error indicates minimal information loss after dimensionality reduction.
+### Qualitative Evaluation
+Because PCA is an unsupervised technique, evaluation focuses on:
+- The proportion of variance retained by the selected components
+- Structural patterns observed in reduced-dimensional visualizations
+- Interpretability of principal component loadings
+
+### Persisting Reduced Data (Optional)
+
+The PCA-reduced dataset can optionally be saved to disk using the
+`save_reduced_data` utility function. Persisting the reduced
+representation enables reuse in downstream tasks such as clustering,
+anomaly detection, or time-series analysis without recomputing PCA.
+
 
 ---
 
