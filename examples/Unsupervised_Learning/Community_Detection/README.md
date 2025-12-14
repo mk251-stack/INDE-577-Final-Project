@@ -67,8 +67,7 @@ discovered communities.
 
 The main demonstration of this algorithm can be found in:
 
-'examples/Unsupervised_Learning/Community_Detection/Community_Detection.ipynb'
-
+`examples/Unsupervised_Learning/Community_Detection/Community_Detection.ipynb`
 
 The notebook includes:
 

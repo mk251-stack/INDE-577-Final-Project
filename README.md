@@ -8,7 +8,9 @@ examples for students in INDE 577.
 ## Installation
 
 Create and activate a virtual environment, then install the project in editable
-mode with the development tools:
+mode with the development tools. The build requirements are pinned to match the
+setuptools version bundled in the course environment so this command works even
+without internet access:
 
 ```bash
 python -m venv .venv

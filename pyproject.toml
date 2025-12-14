@@ -1,5 +1,7 @@
 [build-system]
-requires = ["setuptools>=69", "wheel"]
+# Keep the build-time requirements aligned with the setuptools version bundled in
+# the teaching environment so editable installs do not fail when offline.
+requires = ["setuptools>=65.5", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]

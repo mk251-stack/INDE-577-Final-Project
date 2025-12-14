@@ -1,3 +1,22 @@
+"""
+merge.py
+
+Utility script to construct a single Census Income (Adult) dataset CSV
+from the census website.
+
+The original dataset is distributed as separate training and test files
+(`adult.data` and `adult.test`) with inconsistent formatting. This script:
+
+- Downloads both files directly from the UCI repository
+- Assigns consistent column names
+- Removes formatting artifacts in the target label (trailing '.')
+- Concatenates train and test into a single dataset
+- Exports the result as `census_income.csv`
+
+This script is provided for transparency and reproducibility.
+The generated CSV is used by example notebooks and tests.
+"""
+
 import pandas as pd
 
 cols = [
