@@ -8,7 +8,7 @@ The full implementation, analysis, and results are documented in:
 
 Logistic_Regression.ipynb
 
-## 1. Goal of the Project
+## Goal of the Project
 
 The objective is to use logistic regression to classify each observation as:
 
@@ -18,7 +18,7 @@ The objective is to use logistic regression to classify each observation as:
 
 This transforms the continuous variable GENERATION (Megawatthours) into a binary classification task.
 
-## 2. Dataset Overview
+## Dataset Overview
 
 The dataset contains 496,774 rows and the following features:
 - YEAR - Calendar year of energy generation
@@ -33,7 +33,7 @@ Additional notes:
 - No missing values were found.
 - After median-based labeling, classes are approximately balanced.
 
-## 3. Project Workflow
+## Project Workflow
 
 
 Steps:
@@ -57,14 +57,14 @@ Steps:
 - Coefficient interpretation
 - Final conclusions and recommendations
 
-## 4. Running the Notebook
+## Running the Notebook
 
 1. Install dependencies from the project root: `pip install -r requirements.txt`.
 2. Launch Jupyter and open `examples/Supervised_Learning/Logistic_Regression/Logistic_Regression.ipynb`.
 3. The notebook expects the dataset at `datasets/energy.csv` and adds `src/` to the Python path for the custom implementation.
 
 
-## 5. Exploratory Data Analysis (EDA)
+## Exploratory Data Analysis (EDA)
 
 Key findings:
 - Numeric columns include: YEAR, MONTH, GENERATION, target.
@@ -73,10 +73,10 @@ Key findings:
 - No missing values detected.
 EDA visualizations include:
 - Histograms for numeric features
-- Bar charts for the top 20 categories
+- Bar charts for the top 20 cat.
 - Correlation heatmap
 
-## 6. Model Development
+## Model Development
 Custom Logistic Regression
 Implemented from scratch using:
 - Sigmoid function
@@ -89,7 +89,7 @@ Scikit-Learn Baseline
 
 A standard LogisticRegression(max_iter=1000) model is used for benchmarking.
 
-## 7. Results
+## Results
 Accuracy
 
 Both models achieved nearly identical accuracy:
@@ -109,14 +109,20 @@ The custom model correctly classifies approximately 78–80% of each class.
 5-fold cross-validation mean accuracy: 0.7944
 (Confirms stability and absence of overfitting.)
 
-## 8. Interpretation of Coefficients
+## Interpretation of Coefficients
 
 - Positive coefficients increase the probability of high generation.
 - Negative coefficients indicate association with low generation.
 - Standardization allows direct comparison between coefficients.
 - The most influential predictors are energy source categories and producer type categories.
 
-## 9. Conclusions
+## Key findings
+
+- Logistic regression achieved strong discriminatory ability on the high vs. low generation task, with AUC ≈ 0.887 (leakage-safe pipeline).
+- Because your target is built from a training-median threshold, class balance is controlled and performance is easier to interpret across classes.
+- The most influential predictors typically align with domain expectations: energy source and state drive much of the separability.
+
+## Conclusions
 - Logistic Regression performs consistently and effectively on this classification task.
 - The custom implementation matches Scikit-Learn performance exactly, validating correctness.
 - AUC values around 0.886 indicate strong discriminative power.

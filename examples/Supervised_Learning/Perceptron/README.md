@@ -4,7 +4,7 @@ This directory contains the custom Perceptron implementation and a Jupyter noteb
 
 The implementation follows the classic perceptron update rule and is consistent with the structure used in the other supervised learning modules of this repository.
 
-## 1. Overview of the Algorithm
+## Overview of the Algorithm
 
 The Perceptron is one of the earliest supervised learning algorithms for binary classification.  
 It iteratively adjusts a linear decision boundary by updating model weights whenever a misclassification occurs.
@@ -34,7 +34,7 @@ Where:
 - `eta` = learning rate  
 - `actual` ∈ {–1, 1}
 
-## 2. Data
+## Data
 
 The perceptron notebook uses the energy.csv dataset located in:
 datasets/energy.csv
@@ -56,7 +56,7 @@ A binary classification label is created based on the median energy generation v
 - `1` = High generation (above the median)
 - `–1` = Low generation (at or below the median)
 
-## 3. Notebook Contents (`Perceptron.ipynb`)
+## Notebook Contents (`Perceptron.ipynb`)
 
 The notebook demonstrates the full workflow:
 
@@ -73,13 +73,13 @@ The notebook demonstrates the full workflow:
   - Confusion matrix
 - Comparison with scikit-learn's Perceptron (optional)
 
-## 4. Running the Notebook
+## Running the Notebook
 
 1. Install dependencies from the repository root: `pip install -r requirements.txt`.
 2. Open `examples/Supervised_Learning/Perceptron/Perceptron.ipynb` in Jupyter.
 3. The notebook expects the dataset at `datasets/energy.csv` and uses the `src/` directory for the custom `rice_ml` package.
 
-## 5. Implementation (`perceptron.py`)
+## Implementation (`perceptron.py`)
 
 Located in:
 src/rice_ml/supervised_learning/perceptron.py
@@ -91,7 +91,7 @@ Includes:
 - Prediction method  
 - Tracking misclassifications per epoch  
 
-## 6. Results Summary
+## Results Summary
 
 On the energy generation classification task, the perceptron achieves:
 
@@ -101,3 +101,10 @@ On the energy generation classification task, the perceptron achieves:
 
 The model demonstrates strong generalization and minimal overfitting.  
 The high-dimensional one-hot-encoded feature space enables the perceptron to find a separating hyperplane effectively.
+
+## Key findings
+- The perceptron typically performed as a fast baseline, but its capacity is limited when classes are not linearly separable in the feature space.
+- Sensitive to learning rate and epochs; convergence behavior depends on scaling and class overlap.
+
+## Conclusions
+Useful as an educational baseline and to validate preprocessing, but generally outperformed by logistic regression or multi-layer models on complex real-world structure. Best used as a stepping stone to neural networks (MLP).
