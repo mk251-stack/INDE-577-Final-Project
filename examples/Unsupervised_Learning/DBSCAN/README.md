@@ -90,7 +90,24 @@ The accompanying notebook includes:
 
 ---
 
-## Summary
+## Key Findings
 
-This example illustrates how DBSCAN can be effectively applied to large real-world datasets when combined with appropriate preprocessing.  
-By controlling feature scale and dimensionality, DBSCAN reveals meaningful density-based structure and highlights anomalous behavior that centroid-based methods may overlook.
+- The energy dataset is dominated by **one primary usage pattern**, as evidenced by a single large, high-density cluster identified by DBSCAN.
+- Direct application of DBSCAN on the raw, high-dimensional dataset resulted in poor clustering performance, highlighting the limitations of density-based methods in high-dimensional spaces.
+- Applying **Incremental PCA** was essential for:
+  - Reducing noise
+  - Revealing meaningful density structure
+  - Enabling DBSCAN to function effectively
+- Hyperparameter tuning using the **k-distance plot** and eps sensitivity analysis revealed a **stable clustering region** around `eps = 0.18`.
+- At this stable eps value, DBSCAN consistently identified:
+  - One dominant cluster representing **normal energy usage**
+  - A small number of **noise points**, corresponding to anomalous or rare behavior
+- Lower eps values (e.g., `eps = 0.01`) produced fine-grained separation useful for **anomaly detection**, while higher eps values favored **robust, stable clustering**.
+
+---
+
+## Conclusion
+
+This project demonstrates that DBSCAN can be a powerful unsupervised learning tool for energy consumption data **when paired with appropriate preprocessing techniques**. While the raw dataset did not exhibit strong density separation, the integration of feature scaling, subsampling, and PCA enabled DBSCAN to uncover a stable and interpretable structure.
+
+The final results indicate that energy usage behavior is largely homogeneous, with a small number of deviations that can be effectively isolated as anomalies. As such, DBSCAN is best suited in this context for **outlier and anomaly detection** rather than broad segmentation. This workflow highlights the importance of dimensionality reduction and parameter tuning when applying density-based clustering methods to large, real-world datasets.
