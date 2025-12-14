@@ -29,7 +29,7 @@ The core idea is as follows:
 Nodes that converge to the same label are interpreted as belonging to the same
 community.
 
-### Key properties
+### Key Properties
 
 - **Fully unsupervised**: no labels are used or fixed during training.
 - **Emergent structure**: the number of communities is determined by the graph.
@@ -37,8 +37,8 @@ community.
 - **Local diffusion**: community assignments reflect local neighborhood structure.
 
 This algorithm is conceptually related to semi-supervised label propagation, but
-differs in that *no labels are clamped* and the objective is **structure
-discovery rather than classification**.
+differs in that *no labels are clamped* and the objective is **structure discovery
+rather than classification**.
 
 ---
 
@@ -60,6 +60,53 @@ structure.
 True Fashion-MNIST labels are **not used during training**. They are examined
 *only after community detection* to help interpret the semantic meaning of the
 discovered communities.
+
+---
+
+## Evaluation and Interpretation Strategy
+
+Community detection does not aim to predict known class labels or optimize
+classification accuracy. As a result:
+
+- **Traditional supervised metrics** (accuracy, precision, recall) are not
+  applicable.
+- **Clustering metrics** that assume fixed class structure (e.g., homogeneity,
+  NMI) can be misleading, since communities may capture finer-grained structure
+  than dataset labels.
+
+Instead, evaluation is **qualitative and structural**, focusing on:
+
+- The coherence and stability of discovered communities
+- Alignment with known semantic categories *only for interpretation*
+- Visual inspection of community structure using PCA projections
+
+This approach emphasizes **understanding data organization**, not predictive
+performance.
+
+---
+
+## Key Findings
+
+- The algorithm discovers multiple communities without prior knowledge of the
+  number of classes.
+- Several communities align closely with semantic Fashion-MNIST categories
+  (e.g., trousers, bags, footwear).
+- Visually similar clothing types naturally form mixed communities, reflecting
+  intrinsic ambiguity in the dataset.
+- The k-NN graph effectively captures meaningful local similarity relationships
+  between images.
+
+---
+
+## Limitations
+
+- Results are sensitive to the choice of `k` in the k-NN graph construction.
+- Community detection outcomes depend heavily on feature representation and
+  distance metrics.
+- Large datasets require subsampling due to memory and computational constraints.
+
+Despite these limitations, the method provides valuable insight into the
+structure of high-dimensional image data.
 
 ---
 
