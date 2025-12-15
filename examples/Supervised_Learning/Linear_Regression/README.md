@@ -110,3 +110,46 @@ Full OLS implementation with:
 - R² and MSE metrics  
 
 ---
+
+## Key Findings
+
+From the housing price prediction task, several important observations emerge:
+
+- **Strong linear relationships** were identified between the target variable (`MEDV`) and predictors such as:
+  - average number of rooms (`RM`)
+  - proportion of lower-status population (`LSTAT`)
+  - pupil–teacher ratio (`PTRATIO`)
+
+- **Multicollinearity was significant** among several predictors (e.g., `TAX`, `INDUS`, `RAD`), motivating the use of
+  Variance Inflation Factor (VIF)–based feature selection. Removing highly collinear variables improved coefficient
+  stability and interpretability without degrading predictive performance.
+
+- The **custom OLS implementation** produced coefficients, predictions, and performance metrics
+  consistent with `sklearn.linear_model.LinearRegression`, validating the correctness of the implementation.
+
+- **Residual diagnostics** showed:
+  - mild deviations from normality in the tails,
+  - some heteroskedasticity for high predicted values,
+  which are common in real-world housing data and highlight the limits of strict OLS assumptions.
+
+- Cross-validation results demonstrated **stable generalization performance**, with consistent MSE and R² values
+  across folds, indicating that the model is not overly sensitive to the training split.
+
+---
+
+## Conclusion
+
+This example demonstrates how Linear Regression can be implemented as a **complete, interpretable supervised learning
+pipeline**, rather than as a black-box model.
+
+Key takeaways include:
+
+- Linear Regression remains a strong **baseline model** for continuous prediction tasks, especially when
+  interpretability is important.
+- Proper preprocessing — particularly **handling missing values, scaling, and multicollinearity control** —
+  is essential for reliable coefficient estimates and meaningful inference.
+- Diagnostic tools such as residual plots and normality tests are critical for assessing
+  the validity of model assumptions.
+- While Linear Regression is simple and computationally efficient, it may struggle with
+  nonlinear relationships and heteroskedastic data, motivating the use of more flexible models
+  (e.g., tree-based or ensemble methods) in later sections of this project.
