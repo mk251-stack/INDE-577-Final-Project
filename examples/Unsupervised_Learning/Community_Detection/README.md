@@ -1,128 +1,112 @@
-# Community Detection
+# Community Detection via Unsupervised Label Propagation
 
-This directory contains example code and analysis for **Community Detection**
-using an **unsupervised label propagation** algorithm.
+## Overview
 
-Community detection is an unsupervised learning task whose goal is to identify
-groups of data points (communities) that are more strongly connected to each
-other than to the rest of the dataset. Unlike supervised or semi-supervised
-learning, no labels are provided during training, and the number of communities
-is not specified in advance.
+This project applies **Community Detection** using an **unsupervised label propagation algorithm (LPA)** to uncover latent structure in high-dimensional data. Community detection is an **unsupervised learning** task whose goal is to identify groups of data points (communities) that are more strongly connected to each other than to the rest of the dataset.
 
----
+Unlike supervised or semi-supervised learning:
+- **No labels are provided during training**
+- **The number of communities is not specified in advance**
+- Communities emerge purely from the structure of a similarity graph
 
-## Algorithm
-
-The community detection algorithm implemented here is based on
-**Unsupervised Label Propagation (LPA)** applied to a similarity graph.
-
-The core idea is as follows:
-
-1. Each data point is represented as a node in a graph.
-2. Edges connect nearby points based on a k-nearest-neighbor (k-NN) similarity
-   graph.
-3. Each node is initially assigned a unique label.
-4. Labels are iteratively updated by adopting the most common label among a
-   node’s neighbors (weighted by edge strength).
-5. The process repeats until labels stabilize.
-
-Nodes that converge to the same label are interpreted as belonging to the same
-community.
-
-### Key Properties
-
-- **Fully unsupervised**: no labels are used or fixed during training.
-- **Emergent structure**: the number of communities is determined by the graph.
-- **Graph-based**: results depend on the quality of the similarity graph.
-- **Local diffusion**: community assignments reflect local neighborhood structure.
-
-This algorithm is conceptually related to semi-supervised label propagation, but
-differs in that *no labels are clamped* and the objective is **structure discovery
-rather than classification**.
+The objective of this analysis is **structure discovery**, not prediction.
 
 ---
 
-## Data
+## Project Structure
 
-In the accompanying example notebook, community detection is demonstrated on the
-**Fashion-MNIST** dataset.
+### 1. Dataset and Representation
 
-- Each image is flattened into a 784-dimensional feature vector.
-- Pixel values are normalized to the range \([0, 1]\).
-- A **k-NN graph** is constructed using Euclidean distance.
-- Edge weights are defined using an exponential decay of distances.
+The example notebook demonstrates community detection on the **Fashion-MNIST** dataset.
 
-Because graph-based methods scale poorly with dataset size, a **random subset**
-of the full dataset is used. This allows efficient graph construction, iterative
-label propagation, and clear visualization, while still preserving meaningful
-structure.
+- Each image is flattened into a **784-dimensional feature vector**
+- Pixel intensities are normalized to the range \([0, 1]\)
+- Ground-truth labels are **not used during training**
 
-True Fashion-MNIST labels are **not used during training**. They are examined
-*only after community detection* to help interpret the semantic meaning of the
-discovered communities.
+Because graph-based methods scale poorly with dataset size, a **random subset** of the dataset is used. This enables efficient graph construction, iterative label propagation, and clear visualization, while still preserving meaningful structure.
 
 ---
 
-## Evaluation and Interpretation Strategy
+### 2. Preprocessing
 
-Community detection does not aim to predict known class labels or optimize
-classification accuracy. As a result:
+The preprocessing steps include:
 
-- **Traditional supervised metrics** (accuracy, precision, recall) are not
-  applicable.
-- **Clustering metrics** that assume fixed class structure (e.g., homogeneity,
-  NMI) can be misleading, since communities may capture finer-grained structure
-  than dataset labels.
+- Flattening image data into feature vectors  
+- Normalizing pixel values  
+- Subsampling the dataset for computational efficiency  
+
+No dimensionality reduction is applied prior to graph construction in order to preserve local similarity relationships.
+
+---
+
+### 3. Similarity Graph Construction (k-NN Graph)
+
+Community detection is performed on a **graph representation** of the data:
+
+- Each data point corresponds to a **node**
+- Edges are constructed using a **k-nearest-neighbor (k-NN)** graph based on Euclidean distance
+- Edge weights are computed using an **exponential decay function** of pairwise distances
+
+The resulting weighted graph captures **local neighborhood structure**, which is critical for effective label diffusion.
+
+---
+
+### 4. Unsupervised Label Propagation Algorithm
+
+The community detection algorithm is based on **Unsupervised Label Propagation (LPA)**.
+
+#### Algorithm Steps
+
+1. Assign a **unique label** to each node
+2. Iteratively update each node’s label to the **most frequent label among its neighbors**, weighted by edge strength
+3. Repeat until labels stabilize or a maximum number of iterations is reached
+
+Nodes that converge to the same label are interpreted as belonging to the same community.
+
+#### Key Properties
+
+- **Fully unsupervised**: no labels are clamped or fixed
+- **Emergent structure**: the number of communities is determined by the graph
+- **Graph-based**: performance depends on graph quality
+- **Local diffusion**: labels propagate through neighborhood interactions
+
+This algorithm is closely related to **semi-supervised label propagation**, but differs fundamentally in that **no labeled data is provided**, and the goal is **structure discovery rather than classification**.
+
+---
+
+## Evaluation Strategy
+
+Community detection does not aim to predict known class labels or optimize classification accuracy. As a result:
+
+- **Supervised metrics** (accuracy, precision, recall) are not applicable
+- **Clustering metrics** assuming fixed class structure (e.g., homogeneity, NMI) can be misleading
 
 Instead, evaluation is **qualitative and structural**, focusing on:
 
-- The coherence and stability of discovered communities
+- Stability and coherence of discovered communities
 - Alignment with known semantic categories *only for interpretation*
-- Visual inspection of community structure using PCA projections
+- Visual inspection using **PCA projections** of the original feature space
 
-This approach emphasizes **understanding data organization**, not predictive
-performance.
+True Fashion-MNIST labels are examined **only after training** to help interpret the semantic meaning of the discovered communities.
 
 ---
 
 ## Key Findings
 
-- The algorithm discovers multiple communities without prior knowledge of the
-  number of classes.
-- Several communities align closely with semantic Fashion-MNIST categories
-  (e.g., trousers, bags, footwear).
-- Visually similar clothing types naturally form mixed communities, reflecting
-  intrinsic ambiguity in the dataset.
-- The k-NN graph effectively captures meaningful local similarity relationships
-  between images.
+- The algorithm discovers multiple communities without prior knowledge of the number of classes
+- Several communities align closely with semantic Fashion-MNIST categories (e.g., trousers, bags, footwear)
+- Visually similar clothing types form mixed communities, reflecting inherent ambiguity in the dataset
+- The k-NN similarity graph effectively captures meaningful local relationships
 
 ---
 
 ## Limitations
 
-- Results are sensitive to the choice of `k` in the k-NN graph construction.
-- Community detection outcomes depend heavily on feature representation and
-  distance metrics.
-- Large datasets require subsampling due to memory and computational constraints.
+- Results are sensitive to the choice of `k` in the k-NN graph
+- Community structure depends strongly on feature representation and distance metric
+- Graph construction and propagation scale poorly to very large datasets, requiring subsampling
 
-Despite these limitations, the method provides valuable insight into the
-structure of high-dimensional image data.
-
----
-
-## Example Notebook
-
-The main demonstration of this algorithm can be found in:
-
-`examples/Unsupervised_Learning/Community_Detection/Community_Detection.ipynb`
-
-The notebook includes:
-
-- Graph construction using k-NN.
-- Unsupervised community detection via label propagation.
-- PCA visualization of discovered communities.
-- Qualitative interpretation using ground-truth labels.
-- A conceptual comparison with semi-supervised label propagation.
+Despite these limitations, the method provides valuable insight into the **organization of high-dimensional image data**.
 
 ---
 
@@ -139,3 +123,9 @@ used for:
 - Exploratory structure discovery (unsupervised learning),
 
 depending on how label information is incorporated.
+
+---
+
+## Conclusion
+
+Unsupervised label propagation provides a powerful framework for **community detection on graph-structured data**. By relying solely on neighborhood relationships, the algorithm reveals meaningful latent structure without requiring labeled data or predefined class counts. This makes it a valuable exploratory tool for understanding complex, high-dimensional datasets.

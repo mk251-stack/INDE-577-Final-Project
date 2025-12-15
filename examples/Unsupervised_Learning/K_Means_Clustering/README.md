@@ -1,94 +1,129 @@
-# K-Means Clustering (Census Income)
+# K-Means Clustering on the Census Income Dataset
 
-This directory contains an example implementation and analysis of **K-Means
-clustering** applied to the Census Income dataset.  
-The goal is to uncover **latent socioeconomic behavior patterns** using
-demographic, education, work, and financial features in a fully **unsupervised**
-setting.
+## Overview
+
+This project applies **K-Means clustering**, an **unsupervised learning** algorithm, to the **Census Income (Adult)** dataset to uncover latent socioeconomic and behavioral patterns.  
+The objective is to identify groups of individuals with similar demographic, educational, and work-related characteristics **without using income labels during training**.
+
+K-Means is used here as an **exploratory tool** to understand structure in high-dimensional socioeconomic data rather than as a predictive model.
 
 ---
 
-## Algorithm
+## Project Structure
 
-K-Means is an unsupervised clustering algorithm that partitions data into
-`k` clusters by minimizing within-cluster variance (inertia).  
-Each data point is assigned to the nearest cluster centroid in feature space,
-and centroids are updated iteratively until convergence.
+### 1. Dataset and Representation
+
+- Dataset: `census_income.csv`
+- Source: **UCI Census Income (Adult) dataset**
+
+The dataset contains demographic, education, employment, and financial attributes describing individuals.
+
+#### Features Used for Clustering
+
+- **Numeric features**:
+  - `age`
+  - `fnlwgt`
+  - `education_num`
+  - `capital_gain`
+  - `capital_loss`
+  - `hours_per_week`
+
+- **Categorical features (one-hot encoded)**:
+  - `workclass`
+  - `education`
+  - `marital_status`
+  - `occupation`
+  - `relationship`
+  - `race`
+  - `sex`
+  - `native_country`
+
+The `income` variable:
+- Is **excluded from clustering**
+- Is converted to binary (0/1) **only for post-hoc interpretation and evaluation**
+
+---
+
+### 2. Preprocessing
+
+The preprocessing pipeline includes:
+
+- Removal of missing values
+- One-hot encoding of categorical variables
+- Standardization of all features using `StandardScaler`
+
+Standardization ensures that features with larger numerical ranges do not dominate the Euclidean distance used by K-Means.
+
+---
+
+### 3. K-Means Clustering Algorithm
+
+K-Means partitions data into `k` clusters by minimizing **within-cluster variance (inertia)**.
+
+#### Algorithm Steps
+
+1. Initialize `k` centroids
+2. Assign each data point to the nearest centroid in feature space
+3. Update centroids as the mean of assigned points
+4. Repeat until assignments stabilize or convergence is reached
 
 In this analysis:
 - Clustering is performed in the **full standardized feature space**
-- PCA is used **only for visualization and exploratory analysis**, not for
-  determining clusters
+- PCA is **not used for clustering**, only for visualization
 
 ---
 
-## Data
+### 4. Cluster Selection
 
-- Dataset: `census_income.csv`
-- Source: UCI Census Income (Adult) dataset
-- Features used for clustering:
-  - Numeric: `age`, `fnlwgt`, `education_num`, `capital_gain`,
-    `capital_loss`, `hours_per_week`
-  - Categorical (one-hot encoded): `workclass`, `education`,
-    `marital_status`, `occupation`, `relationship`, `race`,
-    `sex`, `native_country`
+The number of clusters is selected using the **elbow method**, which examines inertia as a function of `k`.
 
-The `income` variable is:
-- **Excluded from clustering**
-- Converted to binary (0/1) **only for post-hoc interpretation and evaluation**
+- A visible elbow indicates diminishing returns from increasing `k`
+- Based on this analysis, **k = 3** is chosen as a balance between:
+  - Cluster compactness
+  - Interpretability
+
+PCA explained-variance analysis confirms that the dataset is **high-dimensional**, reinforcing the decision to perform clustering in the original feature space rather than in reduced dimensions.
 
 ---
 
-## Methodology
+## Evaluation and Interpretation Strategy
 
-1. **Preprocessing**
-   - Missing values removed
-   - Categorical features one-hot encoded
-   - All features standardized prior to clustering
+Post-hoc evaluation includes:
 
-2. **Cluster Selection**
-   - The number of clusters (`k`) is chosen using the **elbow method**
-     based on inertia
-   - PCA explained-variance analysis confirms the data is
-     **high-dimensional**, reinforcing the decision to cluster in the
-     original feature space
+- PCA projections of the clustered data for visualization
+- Cluster-level summary statistics in the original feature space
+- Comparison with the `income` variable **only for interpretation**
 
-3. **Model Fitting**
-   - Final K-Means model trained with `k = 3`
-   - Clustering performed on the full standardized dataset
-
-4. **Interpretation**
-   - PCA 2D projections used to visualize cluster structure and centroids
-   - Cluster-level summary statistics computed in the original feature space
+Metrics such as homogeneity are used cautiously, since income is not assumed to be the primary organizing factor.
 
 ---
 
-## Results & Interpretation
+## Key Findings
 
-- The elbow method indicates **k = 3** as a reasonable trade-off between
-  compactness and interpretability
-- PCA visualizations show overlapping clusters in 2D, which is expected when
-  projecting high-dimensional data
-- Cluster summaries reveal distinct **socioeconomic profiles**, driven by
-  differences in:
+- The elbow method supports **k = 3** as a reasonable clustering choice
+- K-Means uncovers distinct **socioeconomic profiles**, driven by differences in:
   - education
   - working hours
   - age
   - capital gains and losses
-- One cluster exhibits a **higher average income tendency**, while the remaining
-  clusters represent lower-income or mixed-income behavioral patterns
+- One cluster exhibits a **higher average income tendency**, while others represent lower-income or mixed-income patterns
+- A low homogeneity score confirms that **income is not the dominant clustering dimension**
 
-Although cluster-based income alignment reaches moderate accuracy, a low
-homogeneity score confirms that **income is not the primary organizing
-dimension**. Instead, K-Means captures broader behavioral structure.
+These results suggest that K-Means captures broader behavioral structure rather than directly separating income classes.
 
 ---
 
-## Key Takeaways
+## Limitations
 
-- K-Means successfully uncovers meaningful demographic and behavioral structure
-- Income correlates with this structure but does not form clean cluster boundaries
-- PCA is valuable for visualization but should not be confused with clustering
-  objectives
-- Unsupervised results must be interpreted carefully when ground-truth labels
-  are not the dominant signal
+- K-Means assumes spherical clusters and equal variance, which may not hold for socioeconomic data
+- Results are sensitive to feature scaling and the choice of `k`
+- High dimensionality can reduce distance interpretability
+- PCA visualizations may obscure true cluster separation
+
+Despite these limitations, K-Means provides useful insight into latent structure within complex demographic datasets.
+
+---
+
+## Conclusion
+
+K-Means clustering provides a simple yet effective framework for exploring latent socioeconomic structure in the Census Income dataset. By clustering in the full standardized feature space and using income labels only for interpretation, this analysis highlights the strengths and limitations of unsupervised learning when applied to real-world demographic data.
