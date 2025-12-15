@@ -4,12 +4,12 @@ Decision Trees are supervised learning models that can be used for both classifi
 
 They repeatedly split the data based on feature values. Each internal node represents a decision rule on a single feature, each branch represents the outcome of that rule, and each leaf node stores a predicted output. The tree structure makes the model easy to visualize and interpret.
 
-*The Objective:*
+*The Objective:* <br>
 The objective is to evaluate how a single interpretable model performs on an imbalanced, real world classification task and to understand which features most strongly influence income predictions.
 
 I used a Decision Tree Classifier to predict whether a person’s income is greater than fifty thousand dollars or less than or equal to fifty thousand dollars based on demographic and employment features from the Adult Census Income dataset.
 
-*Algorithm:*
+*Algorithm:* <br>
 Decision Trees are supervised learning models that recursively partition the feature space using decision rules that maximize class separation. Each internal node represents a split on a single feature, branches represent outcomes of that rule, and leaf nodes store predicted class labels. 
 
 Decision Trees are a good fit here because they:
