@@ -1,4 +1,3 @@
-# src/rice_ml/supervised_learning/random_forests.py
 """
 Random Forest classification utilities.
 
