@@ -6,6 +6,30 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier as SkDecisionTreeClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 
+"""
+Decision Tree classifier utilities for the Census Income classification task.
+
+Repository context
+------------------
+This repository is organized into three main parts:
+
+1. src
+   Reusable algorithm and data helper functions used across the project.
+
+2. examples
+   Jupyter notebooks that import from src to train, evaluate, and visualize results.
+
+3. tests
+   Unit tests that verify expected behavior, including input validation and
+   correct error handling.
+
+This module provides:
+- A thin wrapper around scikit-learn's DecisionTreeClassifier with stricter
+  validation behavior expected by the notebooks and unit tests.
+- Helper functions to load and preprocess the Census Income dataset.
+- Convenience functions to create a train test split, train a model, and
+  compute standard evaluation outputs.
+"""
 
 # ---------------------------------------------------------------------
 # Custom DecisionTreeClassifier wrapper for tests and notebooks
@@ -269,6 +293,9 @@ def train_decision_tree_classifier(
 def evaluate_classifier(model, X_test, y_test):
     """
     Evaluate a fitted classifier on a test set.
+    This returns a small bundle of evaluation artifacts commonly reported in
+    notebooks: overall accuracy, the confusion matrix, a text report, and the
+    predicted labels.
 
     Parameters
     ----------

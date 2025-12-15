@@ -4,21 +4,26 @@ Random Forest is an ensemble learning method that extends decision trees by trai
 
 I use a Random Forest Classifier to predict whether a person’s income is greater than fifty thousand dollars or less than or equal to fifty thousand dollars using the same Adult Census Income dataset as the Decision Tree section. Random Forests are a natural next step because they correct several limitations of single trees while keeping the interpretability of tree based models.
 
+*The Objective*
+
+The objective here is to evaluate whether Random Forest improves stability and recall for the higher income class in a highly imbalanced tabular dataset.
+
 Random Forests are well suited for this dataset because they:
 >Reduce overfitting by averaging predictions across many trees.
 >Handle nonlinear interactions and complex feature relationships more effectively.
 >Remain stable even when the dataset contains noisy or correlated variables.
 >Provide reliable feature importance estimates aggregated across the entire ensemble.
 
-The goal was to see whether the Random Forest improves recall for the high income class and stabilizes model performance given the skewed distribution of income labels.
-
 # Data Set Comments:
+The model is trained on the Adult Census Income dataset. The prediction task is binary classification:
 
-The same preprocessing steps apply here as in Decision Trees. The dataset is imbalanced, with far more individuals earning less than fifty thousand dollars. Therefore the stratified train test split remains essential to maintain consistent class proportions. The fnlwgt column is again dropped before training because it does not contribute meaningful signal to the model.
+>Income less than or equal to fifty thousand dollars
+>Income greater than fifty thousand dollars
 
-After one hot encoding the categorical variables the final feature matrix contains ninety nine columns, and the Random Forest is trained directly on these encoded inputs.
+The same preprocessing steps apply here as in Decision Trees. The dataset is imbalanced, with far more individuals earning less than fifty thousand dollars. Therefore the stratified train test split remains essential to maintain consistent class proportions. 
+The fnlwgt column is again dropped before training because it does not contribute meaningful signal to the model.
 
-# Key Comments On Running Code:
+# Key Observations and Interpretation:
 
 Training the Random Forest model. I train a Random Forest Classifier using the following hyperparameters:
 
@@ -39,7 +44,14 @@ Evaluation metrics I focus on to analyse is:
 
 In my run the model achieved a test accuracy of roughly zero point eighty six, slightly higher than the Decision Tree but following similar behavior. Recall for the higher income class improves compared to the pruned single tree, but the model still reflects the underlying imbalance where predicting high income remains more difficult. However the Random Forest benefits from variance reduction and produces more stable predictions.
 
-# Feature Importance after Results:
+*Key Insights:*
+
+>Random Forest improves prediction stability and reduces sensitivity to noise compared to individual trees.
+>Precision for the higher income class increases, showing better discrimination of minority outcomes.
+>Recall for high income remains challenging due to class imbalance and population diversity.
+>Feature importance rankings are more reliable and less driven by individual split artifacts.
+
+# Feature Importance Interpretation:
 
 Because Random Forest computes importance across many trees, the resulting ranking is more robust and less sensitive to individual splits. Importance reflects the average reduction in impurity contributed by each feature throughout the forest.
 
@@ -56,8 +68,10 @@ These features align with socioeconomic expectations and how the values have sli
 
 The confusion matrix confirms the model performs very well for the lower income class and moderately for the higher income class. This is expected due to class imbalance and the nature of the underlying population distribution. Nonetheless Random Forest provides better generalization and smoother decision boundaries compared to the single tree.
 
-# Outlook:
+# Conclusion and Outlook:
 
-Random Forest serves as a practical improvement over Decision Trees by addressing the overfitting and split dominance problems of individual trees. It benefits from ensemble diversity and produces more stable, higher recall predictions, especially for minority outcomes like high income in this dataset. The importance estimates are also more reliable since they reflect aggregated behavior across many models rather than the structure of a single tree.
+Random Forest provides a clear improvement over a standalone decision tree by reducing variance, stabilizing predictions, and producing more robust feature importance estimates. While the model still struggles to fully capture the diverse patterns that define high income individuals, it generalizes better and behaves more consistently across runs. The importance estimates are also more reliable since they reflect aggregated behavior across many models rather than the structure of a single tree.
 
 Random Forest forms a strong baseline for tabular classification. Future extensions may include tuning hyperparameters such as max_depth, max_features and class weights or exploring Gradient Boosting methods, which could push performance further especially for the high income group.
+
+In any case, Random Forests extracted the most usable signal from this dataset and proved to be a successful implementation. If nothing else, throwing more trees at the problem actually worked this time. ^^
