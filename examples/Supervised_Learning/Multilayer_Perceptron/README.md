@@ -72,9 +72,9 @@ The notebook walks through:
 - scikit-learn `MLPClassifier`: test accuracy ≈ 0.981 with balanced precision/recall across classes; the notebook also records a `Training interrupted by user` warning during fitting.
 
 ## Key findings
-- The MLP improved flexibility by modeling nonlinear decision boundaries, often improving performance over purely linear methods.
+- In principle, MLPs improve flexibility by modeling nonlinear decision boundaries; however, the custom implementation in this notebook did not successfully realize this potential without additional tuning.
 - Performance depends strongly on architecture (hidden units), learning rate, epochs, batch size, and regularization.
 - Susceptible to overfitting; train/validation curves are important diagnostics.
 
 ## Conclusions
-MLP is appropriate when nonlinear relationships and interactions matter, but requires careful tuning and regularization to generalize.
+MLP is appropriate when nonlinear relationships and interactions matter, but requires careful tuning and regularization to generalize. This outcome is expected for a minimal MLP implementation without advanced optimizers,regularization, or architectural enhancements, and serves as a diagnostic baseline rather than a production-ready neural network.

@@ -45,7 +45,8 @@ dependencies = [
   "matplotlib",
   "scipy",
   "scikit-learn",
-  "statsmodels"
+  "statsmodels",
+  "seaborn"
 ]
 
 

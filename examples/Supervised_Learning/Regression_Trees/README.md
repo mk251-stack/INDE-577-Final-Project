@@ -24,10 +24,11 @@ The regression tree is trained using a depth limited configuration. Instead of m
 
 Key modeling decisions include:
 
->Limiting max depth to control variance
->Using mean squared error and mean absolute error for evaluation
->Tracking R² to assess explanatory power on the test set
->The tuning process evaluates how error changes as tree depth increases. As expected, shallow trees underfit while deeper trees begin to overfit, producing a clear minimum in test error that indicates an appropriate tradeoff point.
+- Limiting maximum depth to control variance
+- Using Mean Squared Error (MSE) and Mean Absolute Error (MAE) for evaluation
+- Tracking R² to assess explanatory power on the test set
+
+The tuning process evaluates how error changes as tree depth increases. As expected, shallow trees underfit while deeper trees begin to overfit, producing a clear minimum in test error that indicates an appropriate tradeoff point.
 
 # Evaluation Metrics and Results
 
@@ -58,20 +59,20 @@ In addition to numeric metrics, a predicted vs actual scatter plot is used to vi
 
 This visualization helps reveal:
 
-Slight regression to the mean at extreme housing values
-Increased error variance for high priced homes
-Overall consistency across the bulk of the dataset
+- Slight regression to the mean at extreme housing values
+- Increased error variance for high-priced homes
+- Overall consistency across the bulk of the dataset
 
 These patterns are expected for regression trees trained on limited data and provide useful intuition about model limitations.
 
 # Outlook
 
-While a single Regression Tree performs well and offers strong interpretability, it remains sensitive to data splits and noise. The natural next step is to extend this approach using ensemble methods such as Random Forests, which average predictions across many trees trained on different subsets of data and features.
+While a single Regression Tree performs well and offers strong interpretability, it remains sensitive to data splits and noise. A natural extension is to apply ensemble methods such as Random Forests, which average predictions across many trees trained on different subsets of data and features.
 
 This typically leads to:
 
->Lower variance
->Improved generalization
->More stable feature importance estimates
+- Lower variance
+- Improved generalization
+- More stable feature importance estimates
 
-Running Random Forests on this dataset provides a useful comparison point and helps quantify how much performance is gained by sacrificing some interpretability for robustness. BUT this is an afterthought sadly, I did RF on the census dataset :( but this wouldve been nice to see too
+Although Random Forests are explored elsewhere in this repository on a different dataset, applying them to the Boston Housing problem would be a valuable extension for directly quantifying the performance gains obtained through ensembling.
