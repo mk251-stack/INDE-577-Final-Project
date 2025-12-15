@@ -116,7 +116,7 @@ def test_dt_reproducible_with_same_random_state():
 def test_dt_wrapper_validation_and_fit_checks():
     """
     Rationale
-    Your wrapper exists to enforce strict behaviour expected by tests and notebooks.
+    My wrapper exists to enforce strict behaviour expected by tests and notebooks.
     Passing means invalid usage fails loudly instead of silently producing nonsense.
     """
     X, y = _make_toy_binary(seed=5)
