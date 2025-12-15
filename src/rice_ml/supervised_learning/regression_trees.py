@@ -6,25 +6,40 @@ from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
+"""
+Regression Tree utilities for supervised learning on tabular regression datasets.
+
+This module provides a thin, explicit wrapper around scikit learn's
+DecisionTreeRegressor. It follows a clear workflow of data loading,
+validation, train test splitting, model fitting, evaluation, and
+hyperparameter exploration.
+
+The design favors interpretability, reproducibility, and alignment
+with notebook based experimentation rather than automation or abstraction.
+"""
 
 @dataclass
 class RegressionTreeConfig:
     """
-    Configuration container for the RegressionTree model.
+    Configuration container for RegressionTree.
 
-    Parameters
-    ----------
-    test_size : float, default=0.33
-        Proportion of the dataset to include in the test split.
-    random_state : int, default=42
-        Random seed for reproducibility.
-    max_depth : int or None, default=None
-        Maximum depth of the regression tree. If None, the tree is grown fully.
-    min_samples_split : int, default=2
+    This dataclass defines all tunable parameters used for data splitting
+    and tree construction. It allows consistent reuse of hyperparameters
+    across experiments and notebooks.
+
+    Attributes
+    test_size
+        Proportion of the dataset used for the test split.
+    random_state
+        Seed for reproducibility of splits and model training.
+    max_depth
+        Maximum depth of the regression tree. Controls model complexity.
+    min_samples_split
         Minimum number of samples required to split an internal node.
-    min_samples_leaf : int, default=1
-        Minimum number of samples required to be at a leaf node.
+    min_samples_leaf
+        Minimum number of samples required at a leaf node.
     """
+        
     test_size: float = 0.33
     random_state: int = 42
     max_depth: Optional[int] = None
@@ -34,29 +49,31 @@ class RegressionTreeConfig:
 
 def load_boston_csv(csv_path: str, target_col: str = "medv"):
     """
-    Load the Boston Housing dataset from a CSV file.
+    Load a regression dataset from CSV and split into features and target.
+
+    This function reads a CSV file, separates the target column from the
+    feature matrix, validates the inputs, and returns clean numeric data
+    suitable for regression tree training.
 
     Parameters
-    ----------
-    csv_path : str
+    csv_path
         Path to the CSV file.
-    target_col : str, default="medv"
+    target_col
         Name of the target column.
 
     Returns
-    -------
-    X : pandas.DataFrame
-        Feature matrix.
-    y : pandas.Series
-        Target vector.
-    df : pandas.DataFrame
-        Full dataset including target column.
+    X
+        Feature matrix as a pandas DataFrame.
+    y
+        Target values as a pandas Series.
+    df
+        Original loaded DataFrame.
 
     Raises
-    ------
     ValueError
-        If the target column is not present in the dataset.
+        If the target column is missing or validation fails.
     """
+
     df = pd.read_csv(csv_path)
     if target_col not in df.columns:
         raise ValueError(f"Target column not found: {target_col}")
@@ -70,21 +87,24 @@ def _validate_xy(X: pd.DataFrame, y: pd.Series):
     """
     Validate feature matrix and target vector for regression modeling.
 
+    This function enforces strict assumptions required by the regression
+    tree implementation. It ensures that inputs are numeric, non empty,
+    aligned in length, and free of missing values.
+
     Parameters
-    ----------
-    X : pandas.DataFrame
+    X
         Feature matrix.
-    y : pandas.Series
+    y
         Target vector.
 
     Raises
-    ------
     TypeError
-        If X is not a DataFrame or y is not a Series.
+        If X or y are of incorrect types.
     ValueError
-        If inputs are empty, misaligned, contain missing values,
-        or include non-numeric features.
+        If data is empty, misaligned, contains missing values,
+        or includes non numeric features.
     """
+    
     if not isinstance(X, pd.DataFrame):
         raise TypeError("X must be a pandas DataFrame")
     if not isinstance(y, pd.Series):
@@ -106,16 +126,13 @@ def _validate_xy(X: pd.DataFrame, y: pd.Series):
 
 class RegressionTree:
     """
-    Wrapper around scikit-learn's DecisionTreeRegressor with
-    validation and evaluation utilities.
+    Wrapper class for DecisionTreeRegressor with explicit workflow control.
 
-    Parameters
-    ----------
-    config : RegressionTreeConfig or None, default=None
-        Configuration object controlling tree hyperparameters
-        and train/test split behavior.
-    """
-
+    This class encapsulates data splitting, training, prediction, and
+    evaluation while preserving transparency of model behavior.
+    Feature names are tracked to ensure consistent column alignment
+    during prediction.
+    """    
     def __init__(self, config: Optional[RegressionTreeConfig] = None):
         self.config = config or RegressionTreeConfig()
         self.model = DecisionTreeRegressor(
@@ -225,30 +242,31 @@ def tune_max_depth(
     random_state: int = 42,
 ):
     """
-    Tune the maximum depth of a regression tree by evaluating
-    test-set performance across multiple depths.
+    Evaluate regression tree performance across multiple tree depths.
+
+    This function trains separate regression trees for each candidate
+    maximum depth and records error metrics on the test set.
+    It is used to identify the depth that best balances bias and variance.
 
     Parameters
-    ----------
-    X_train : pandas.DataFrame
+    X_train
         Training feature matrix.
-    y_train : pandas.Series
-        Training target vector.
-    X_test : pandas.DataFrame
+    y_train
+        Training target values.
+    X_test
         Test feature matrix.
-    y_test : pandas.Series
-        Test target vector.
-    depths : iterable of int, default=range(1, 21)
-        Candidate max_depth values to evaluate.
-    random_state : int, default=42
-        Random seed for reproducibility.
+    y_test
+        Test target values.
+    depths
+        Iterable of max depth values to evaluate.
+    random_state
+        Seed for reproducibility.
 
     Returns
-    -------
-    pandas.DataFrame
-        Table of max_depth values and corresponding MSE, MAE, and R²,
-        sorted by increasing MSE.
-    """
+    pandas DataFrame
+        Table containing max_depth, mse, mae, and r2 for each depth,
+        sorted by mean squared error.
+    """    
     _validate_xy(X_train, y_train)
     _validate_xy(X_test, y_test)
 

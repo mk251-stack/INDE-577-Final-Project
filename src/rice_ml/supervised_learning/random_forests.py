@@ -1,10 +1,18 @@
+# src/rice_ml/supervised_learning/random_forests.py
 """
-Utility functions and configuration for Random Forest classification.
+Random Forest classification utilities.
 
-This module provides a lightweight, reusable interface for training,
-evaluating, and interpreting Random Forest classifiers using scikit-learn.
-It is designed to support example notebooks and unit tests in the
-supervised learning section of the project.
+This module provides a lightweight interface for training, evaluating,
+and interpreting Random Forest classifiers on tabular datasets.
+
+It is designed to be used by example notebooks under
+examples/Supervised_Learning/Random_Forests and follows the same
+train–evaluate–analyze pattern used across other supervised learning
+modules in this repository.
+
+The implementation assumes that preprocessing has already been handled
+upstream and focuses purely on model configuration, fitting, evaluation,
+and feature importance extraction.
 """
 
 from dataclasses import dataclass
@@ -19,19 +27,21 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 @dataclass
 class RandomForestConfig:
     """
-    Configuration container for RandomForestClassifier hyperparameters.
+    Configuration container for Random Forest hyperparameters.
+
+    This dataclass centralizes model configuration to make experiments
+    reproducible and parameter choices explicit.
 
     Attributes
     ----------
     n_estimators : int, default=200
         Number of trees in the forest.
     max_depth : int or None, default=None
-        Maximum depth of each tree. If None, nodes are expanded until all
-        leaves are pure or contain fewer than min_samples_split samples.
+        Maximum depth of each tree. If None, trees expand until pure.
     min_samples_split : int, default=2
         Minimum number of samples required to split an internal node.
     min_samples_leaf : int, default=1
-        Minimum number of samples required to be at a leaf node.
+        Minimum number of samples required at a leaf node.
     random_state : int, default=42
         Random seed for reproducibility.
     n_jobs : int, default=-1
@@ -52,23 +62,24 @@ def train_random_forest(
     config: Optional[RandomForestConfig] = None
 ) -> RandomForestClassifier:
     """
-    Train a Random Forest classifier.
+    Train a Random Forest classifier using the provided configuration.
 
     Parameters
     ----------
-    X_train : array-like of shape (n_samples, n_features)
+    X_train : array-like or pandas.DataFrame
         Training feature matrix.
-    y_train : array-like of shape (n_samples,)
+    y_train : array-like or pandas.Series
         Training target labels.
     config : RandomForestConfig or None, default=None
-        Configuration object specifying Random Forest hyperparameters.
+        Configuration object specifying model hyperparameters.
         If None, default configuration values are used.
 
     Returns
     -------
     model : RandomForestClassifier
-        Trained Random Forest classifier.
+        Fitted Random Forest classifier.
     """
+
     if config is None:
         config = RandomForestConfig()
 
@@ -114,26 +125,27 @@ def evaluate_random_forest(
     """
     Evaluate a trained Random Forest classifier on test data.
 
+    Computes standard classification metrics commonly used in analysis
+    notebooks, including accuracy, confusion matrix, and a detailed
+    classification report.
+
     Parameters
     ----------
     model : RandomForestClassifier
-        A fitted Random Forest model.
-    X_test : array-like of shape (n_samples, n_features)
+        Trained Random Forest classifier.
+    X_test : array-like or pandas.DataFrame
         Test feature matrix.
-    y_test : array-like of shape (n_samples,)
+    y_test : array-like or pandas.Series
         True test labels.
 
     Returns
     -------
-    results : dict
+    metrics : dict
         Dictionary containing:
-        - 'accuracy' : float
-            Classification accuracy on the test set.
-        - 'classification_report' : str
-            Text summary of precision, recall, and F1-score.
-        - 'confusion_matrix' : ndarray of shape (n_classes, n_classes)
-            Confusion matrix of predictions vs. true labels.
-    """
+        - accuracy : float
+        - classification_report : str
+        - confusion_matrix : ndarray
+    """    
     y_pred = model.predict(X_test)
 
     acc = accuracy_score(y_test, y_pred)
@@ -151,27 +163,28 @@ def get_feature_importances(
     model: RandomForestClassifier,
     feature_names: List[str]
 ) -> pd.DataFrame:
+    
     """
-    Retrieve feature importance scores from a trained Random Forest.
+    Extract and rank feature importances from a trained Random Forest model.
 
-    Importance is computed as the normalized total reduction of impurity
-    brought by each feature across all trees in the forest.
+    Feature importances are computed as the mean decrease in impurity
+    across all trees in the forest.
 
     Parameters
     ----------
     model : RandomForestClassifier
-        A fitted Random Forest model.
+        Trained Random Forest classifier.
     feature_names : list of str
         Names of input features corresponding to model inputs.
 
     Returns
     -------
     importances : pandas.DataFrame
-        DataFrame with columns:
-        - 'feature' : feature name
-        - 'importance' : importance score
-        Sorted in descending order of importance.
+        DataFrame sorted by descending importance with columns:
+        - feature
+        - importance
     """
+
     return (
         pd.DataFrame(
             {

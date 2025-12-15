@@ -1,15 +1,28 @@
 """
-K-Nearest Neighbors (KNN) classification utilities.
+k-Nearest Neighbors classification utilities.
 
-This module provides helper functions to build, train, and evaluate a
-KNN classifier using scikit-learn pipelines. Categorical variables are
-one-hot encoded, numerical variables are standardized, and preprocessing
-is combined with the classifier in a single pipeline to prevent data leakage.
+Repository context
+------------------
+This repository is organized into three main parts:
 
-The main entry points are:
-- build_knn_pipeline
-- train_knn_model
-- evaluate_knn_model
+1. src
+   Reusable algorithm and data helper functions used across the project.
+
+2. examples
+   Jupyter notebooks that import from src to train, evaluate, and visualize results.
+
+3. tests
+   Unit tests that validate expected behavior, contracts, and edge cases.
+
+This module provides:
+- A preprocessing plus modeling pipeline for KNN classification using scikit-learn.
+- A training helper that performs a train test split and fits the pipeline.
+- An evaluation helper that returns common classification artifacts.
+
+Notes
+-----
+KNN is distance based, so numeric feature scaling is important. This module uses
+StandardScaler for numeric columns and one-hot encoding for categorical columns.
 """
 
 import pandas as pd
@@ -23,31 +36,32 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 
 def build_knn_pipeline(cat_cols, num_cols, n_neighbors=9):
     """
-    Build a preprocessing + KNN classification pipeline.
+    Build a preprocessing plus KNN classification pipeline.
 
-    Categorical features are one-hot encoded and numerical features are
-    standardized before fitting a KNN classifier.
+    The pipeline performs:
+    - One-hot encoding for categorical columns
+    - Standardization for numeric columns
+    - KNN classification on the transformed feature space
 
     Parameters
     ----------
-    cat_cols : list of str
-        Names of categorical feature columns.
-    num_cols : list of str
-        Names of numerical feature columns.
+    cat_cols : list-like
+        Names of categorical columns to be one-hot encoded.
+    num_cols : list-like
+        Names of numeric columns to be standardized.
     n_neighbors : int, default=9
-        Number of neighbors to use for KNN classification.
+        Number of neighbors to use for KNN.
 
     Returns
     -------
     model : sklearn.pipeline.Pipeline
-        A scikit-learn pipeline with preprocessing and KNN classifier.
+        A fitted-ready pipeline with preprocessing and a KNN classifier.
     """
-    preprocess = ColumnTransformer(
-        [
-            ("cat", OneHotEncoder(handle_unknown="ignore"), cat_cols),
-            ("num", StandardScaler(), num_cols),
-        ]
-    )
+
+    preprocess = ColumnTransformer([
+        ("cat", OneHotEncoder(handle_unknown="ignore"), cat_cols),
+        ("num", StandardScaler(), num_cols),
+    ])
 
     knn = KNeighborsClassifier(n_neighbors=n_neighbors)
 
@@ -71,47 +85,43 @@ def train_knn_model(
     num_cols=None,
 ):
     """
-    Train a KNN classifier on a tabular dataset.
+    Train a KNN classifier on a pandas DataFrame.
 
-    The dataset is split into train and test sets. If categorical or
-    numerical columns are not provided, they are inferred automatically
-    based on data types.
+    This function:
+    - Splits the DataFrame into features X and target y
+    - Infers categorical and numeric columns if not provided
+    - Performs a train test split
+    - Builds and fits the preprocessing plus KNN pipeline
 
     Parameters
     ----------
     df : pandas.DataFrame
         Input dataset containing features and target column.
     target_col : str
-        Name of the target column.
+        Name of the target label column in df.
     test_size : float, default=0.2
-        Proportion of the dataset used for testing.
+        Proportion of the dataset to include in the test split.
     random_state : int, default=42
-        Random seed for train-test splitting.
+        Random seed for reproducibility of the train test split.
     n_neighbors : int, default=9
         Number of neighbors to use for KNN.
-    cat_cols : list of str, optional
-        Categorical feature columns. If None, inferred automatically.
-    num_cols : list of str, optional
-        Numerical feature columns. If None, inferred automatically.
+    cat_cols : list-like or None, default=None
+        Explicit list of categorical columns. If None, inferred from df dtypes.
+    num_cols : list-like or None, default=None
+        Explicit list of numeric columns. If None, inferred from df dtypes.
 
     Returns
     -------
     model : sklearn.pipeline.Pipeline
-        Trained KNN pipeline.
-    X_train : pandas.DataFrame
-        Training feature matrix.
-    X_test : pandas.DataFrame
-        Test feature matrix.
-    y_train : pandas.Series
-        Training labels.
-    y_test : pandas.Series
-        Test labels.
-    cat_cols : list of str
-        Categorical feature columns used.
-    num_cols : list of str
-        Numerical feature columns used.
-    """
-    X = df.drop(columns=[target_col])
+        Fitted KNN pipeline.
+    X_train, X_test : pandas.DataFrame
+        Train and test feature splits.
+    y_train, y_test : pandas.Series
+        Train and test label splits.
+    cat_cols, num_cols : list-like
+        Column lists used for preprocessing.
+    """    
+    X = df.drop(target_col, axis=1)
     y = df[target_col]
 
     if cat_cols is None:
@@ -135,29 +145,27 @@ def train_knn_model(
 
 def evaluate_knn_model(model, X_test, y_test, print_report=True):
     """
-    Evaluate a trained KNN model on a test dataset.
-
-    Computes accuracy, confusion matrix, and classification report.
+    Evaluate a trained KNN pipeline on a test set.
 
     Parameters
     ----------
     model : sklearn.pipeline.Pipeline
-        Trained KNN pipeline.
-    X_test : pandas.DataFrame
-        Test feature matrix.
-    y_test : pandas.Series or ndarray
-        True labels for the test set.
+        Trained pipeline that supports predict.
+    X_test : array-like or pandas.DataFrame
+        Test features.
+    y_test : array-like or pandas.Series
+        True test labels.
     print_report : bool, default=True
-        Whether to print evaluation metrics to stdout.
+        If True, prints accuracy, confusion matrix, and classification report.
 
     Returns
     -------
     results : dict
         Dictionary containing:
-        - "accuracy" : float
-        - "confusion_matrix" : ndarray of shape (2, 2)
-        - "classification_report" : str
-    """
+        - accuracy : float
+        - confusion_matrix : ndarray
+        - classification_report : str
+    """    
     preds = model.predict(X_test)
 
     acc = accuracy_score(y_test, preds)
