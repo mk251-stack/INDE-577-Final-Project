@@ -67,7 +67,7 @@ Final configuration:
 
 - DBSCAN identifies:
   - One **dominant dense cluster** representing typical energy behavior
-  - Several **smaller clusters** corresponding to less frequent patterns
+  - A secondary smaller cluster corresponding to less frequent patterns
   - A set of **noise points** (`label = -1`) indicating anomalous or sparse observations
 - Applying DBSCAN directly to the full high-dimensional feature space yields limited structure, highlighting the importance of dimensionality reduction.
 - PCA enables DBSCAN to operate effectively by mitigating the curse of dimensionality.
@@ -100,9 +100,9 @@ The accompanying notebook includes:
   - Enabling DBSCAN to function effectively
 - Hyperparameter tuning using the **k-distance plot** and eps sensitivity analysis revealed a **stable clustering region** around `eps = 0.18`.
 - At this stable eps value, DBSCAN consistently identified:
-  - One dominant cluster representing **normal energy usage**
+  - One dominant cluster representing the dominant operating regime of the energy system
   - A small number of **noise points**, corresponding to anomalous or rare behavior
-- Lower eps values (e.g., `eps = 0.01`) produced fine-grained separation useful for **anomaly detection**, while higher eps values favored **robust, stable clustering**.
+- Lower eps values produced fine-grained separation useful for **anomaly detection**, while higher eps values favored **robust, stable clustering**.
 
 ---
 
