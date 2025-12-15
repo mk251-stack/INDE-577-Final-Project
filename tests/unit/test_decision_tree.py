@@ -11,7 +11,9 @@ from rice_ml.supervised_learning.decision_tree import (
 )
 
 """
-Why these tests exist
+*Why these tests exist:*
+
+The tests are designed assuming the core estimator logic is sound, and the focus shifts towards specific, real world cases that stress the pipeline and validation behavior, which also reflects the professor’s guidance to get creative.
 
 These checks focus on real world failure modes:
 1) end to end wiring breaks between load split train evaluate
