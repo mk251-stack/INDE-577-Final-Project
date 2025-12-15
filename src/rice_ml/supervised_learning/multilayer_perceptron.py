@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Optional
 
 
 class MultilayerPerceptron:
@@ -31,10 +32,11 @@ class MultilayerPerceptron:
         hidden_units: int = 16,
         learning_rate: float = 0.01,
         epochs: int = 100,
-        random_state: int | None = None,
-        batch_size: int | None = None,
+        random_state: Optional[int] = None,
+        batch_size: Optional[int] = None,
         weight_decay: float = 0.0,
     ):
+
         """
         Initialize the Multilayer Perceptron.
 
