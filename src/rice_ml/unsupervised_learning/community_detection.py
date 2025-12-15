@@ -12,6 +12,8 @@ The output is an integer community label per node.
 
 from __future__ import annotations
 
+from typing import Optional
+
 import numpy as np
 
 
@@ -49,7 +51,7 @@ def _validate_adjacency(A: np.ndarray) -> np.ndarray:
 def label_propagation_communities(
     A: np.ndarray,
     max_iter: int = 200,
-    seed: int | None = 42,
+    seed: Optional[int] = 42,
     shuffle: bool = True,
 ) -> np.ndarray:
     """

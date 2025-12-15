@@ -47,7 +47,7 @@ def _validate_xy(X: pd.DataFrame, y: pd.Series):
 
 
 class RegressionTree:
-    def __init__(self, config: RegressionTreeConfig | None = None):
+    def __init__(self, config: Optional[RegressionTreeConfig] = None):
         self.config = config or RegressionTreeConfig()
         self.model = DecisionTreeRegressor(
             max_depth=self.config.max_depth,
