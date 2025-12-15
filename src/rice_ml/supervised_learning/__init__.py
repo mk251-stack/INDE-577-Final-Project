@@ -1,13 +1,40 @@
-from .distance_metrics import euclidean_distance, manhattan_distance
+"""
+Supervised learning algorithms.
+
+Includes classification and regression models implemented
+from scratch and with scikit-learn benchmarks.
+"""
+
+from .perceptron import Perceptron
+from .multilayer_perceptron import MultilayerPerceptron
+from .k_nearest_neighbors import (
+    build_knn_pipeline,
+    train_knn_model,
+    evaluate_knn_model,
+)
 from .decision_tree import DecisionTreeClassifier
-from .knn import KNNClassifier, KNNRegressor
-from .linear_regression import LinearRegression
+from .regression_trees import RegressionTree, RegressionTreeConfig
+from .random_forests import (
+    RandomForestConfig,
+    train_random_forest,
+    evaluate_random_forest,
+    get_feature_importances,
+)
+from .ensemble_methods import get_models, train_eval
 
 __all__ = [
-    "euclidean_distance",
-    "manhattan_distance",
+    "Perceptron",
+    "MultilayerPerceptron",
     "DecisionTreeClassifier",
-    "KNNClassifier",
-    "KNNRegressor",
-    "LinearRegression",
+    "RegressionTree",
+    "RegressionTreeConfig",
+    "RandomForestConfig",
+    "train_random_forest",
+    "evaluate_random_forest",
+    "get_feature_importances",
+    "build_knn_pipeline",
+    "train_knn_model",
+    "evaluate_knn_model",
+    "get_models",
+    "train_eval",
 ]

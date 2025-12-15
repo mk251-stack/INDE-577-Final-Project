@@ -20,7 +20,7 @@ Decision Trees are a good fit here because they:
 >Do not require feature scaling.
 >Provide clear interpretability through the tree diagram and feature importance scores.
 
-In this project I focus on a depth limited tree that balances interpretability and generalization instead of using a fully grown tree that would overfit or tweaking it as my expectations from this dataset with decision trees is that the skewed nature of the dataset would offer an expected result of it performing better with the lower income category and the estimation of how only a few features would be given most importance.
+In this project, I focus on a depth-limited tree that balances interpretability and generalization rather than a fully grown tree, which would likely overfit. Given the skewed nature of the dataset, I expect the model to perform better on the lower-income class and to assign most importance to a small subset of highly informative features.
 
 
 
@@ -40,7 +40,7 @@ The dataset is imbalanced, with the lower income class forming the majority of o
 The dataset includes a column named fnlwgt, which represents a sampling weight rather than an intrinsic personal attribute. While retained in the raw data, fnlwgt is excluded from the model features because it does not provide meaningful predictive signal for a simple Decision Tree classifier.
 The original dataset also contains the column fnlwgt. For this project I kept fnlwgt in the raw data but dropped it from the model features because it behaves like a sampling weight and does not provide meaningful predictive signal in a simple Decision Tree.
 
-The dataset is imbalanced. Most people fall into the lower income class. Therefore to make it further balanced, I used a stratified train test split so that the proportion of each income class is similar in both training and testing sets, which leads to a more reliable evaluation.
+The original dataset contains the column `fnlwgt`. For this project, `fnlwgt` is kept in the raw data but dropped from the model features because it behaves like a sampling weight and does not provide meaningful predictive signal in a simple Decision Tree.
 
 # Training configuration: 
 The Decision Tree classifier is trained using the Gini impurity criterion. To reduce overfitting and control model complexity, the following hyperparameters are applied:
@@ -61,14 +61,17 @@ Because the dataset is imbalanced, accuracy alone is insufficient to fully chara
 >Precision, recall and F1 score for each class <br>
 >Macro and weighted averages to account for class imbalance <br>
 
-In my run the model achieved a test accuracy of about zero point eighty six.
-Recall for the lower income class is much higher than for the higher income class, which reflects the underlying imbalance and shows that the tree is more conservative when predicting high income.
+Model performance is evaluated using:
+- Test-set accuracy
+- Confusion matrix
+- Precision, recall, and F1-score for each class
+- Macro and weighted averages to account for class imbalance
 
-# Feature Importance after Results:
+In this run, the model achieved a test accuracy of approximately **0.86**. Recall for the lower-income class is substantially higher than for the higher-income class, reflecting the underlying class imbalance and the model’s conservative behavior when predicting high income.
 
 Decision Trees compute feature importance scores based on the reduction in Gini impurity achieved by each feature across all splits where it appears. Features that consistently produce strong splits receive higher importance values.
 
-For this census income model the most important features are:
+## Feature Importance
 
 >marital_status_Married_civ_spouse <br>
 >education_num <br>
@@ -77,9 +80,15 @@ For this census income model the most important features are:
 >age <br>
 >hours_per_week <br>
 
-This makes sense socioeconomically. Income is strongly related to marital status, education level and capital gains. Age and hours worked per week also naturally correlate with earning potential. The Decision Tree is essentially using these variables to separate higher income individuals from lower income ones.
+The most important predictors in this model are:
+- `marital_status_Married_civ_spouse`
+- `education_num`
+- `capital_gain`
+- `capital_loss`
+- `age`
+- `hours_per_week`
 
-The model performs especially well for the lower income class, which dominates the dataset, and it provides a clear ranking of which attributes matter most for predicting income. Furthermore, realistically, we see that hihgher income population has a lot more social and intangible/tangible factors.
+These features align well with socioeconomic expectations. Income is strongly related to marital status, education level, and capital gains, while age and hours worked naturally correlate with earning potential. The Decision Tree effectively uses these variables to separate higher-income individuals from lower-income ones.
 
 # Conclusion & Outlook:
 

@@ -99,6 +99,21 @@ def predict_random_forest(
     model: RandomForestClassifier,
     X
 ) -> np.ndarray:
+    """
+    Generate predictions from a trained Random Forest classifier.
+
+    Parameters
+    ----------
+    model : RandomForestClassifier
+        A fitted Random Forest model.
+    X : array-like of shape (n_samples, n_features)
+        Input feature matrix.
+
+    Returns
+    -------
+    y_pred : ndarray of shape (n_samples,)
+        Predicted class labels.
+    """
     return model.predict(X)
 
 
@@ -132,9 +147,11 @@ def evaluate_random_forest(
         - confusion_matrix : ndarray
     """    
     y_pred = model.predict(X_test)
+
     acc = accuracy_score(y_test, y_pred)
     report = classification_report(y_test, y_pred)
     cm = confusion_matrix(y_test, y_pred)
+
     return {
         "accuracy": acc,
         "classification_report": report,
@@ -170,7 +187,10 @@ def get_feature_importances(
 
     return (
         pd.DataFrame(
-            {"feature": feature_names, "importance": model.feature_importances_}
+            {
+                "feature": feature_names,
+                "importance": model.feature_importances_,
+            }
         )
         .sort_values("importance", ascending=False)
         .reset_index(drop=True)

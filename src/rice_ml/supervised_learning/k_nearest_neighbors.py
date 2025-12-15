@@ -65,10 +65,12 @@ def build_knn_pipeline(cat_cols, num_cols, n_neighbors=9):
 
     knn = KNeighborsClassifier(n_neighbors=n_neighbors)
 
-    model = Pipeline([
-        ("preprocess", preprocess),
-        ("knn", knn),
-    ])
+    model = Pipeline(
+        [
+            ("preprocess", preprocess),
+            ("knn", knn),
+        ]
+    )
 
     return model
 
@@ -123,12 +125,16 @@ def train_knn_model(
     y = df[target_col]
 
     if cat_cols is None:
-        cat_cols = X.select_dtypes(include=["object", "category"]).columns
+        cat_cols = X.select_dtypes(include=["object", "category"]).columns.tolist()
     if num_cols is None:
-        num_cols = X.select_dtypes(exclude=["object", "category"]).columns
+        num_cols = X.select_dtypes(exclude=["object", "category"]).columns.tolist()
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state
+        X,
+        y,
+        test_size=test_size,
+        random_state=random_state,
+        stratify=y,
     )
 
     model = build_knn_pipeline(cat_cols, num_cols, n_neighbors=n_neighbors)
@@ -171,4 +177,8 @@ def evaluate_knn_model(model, X_test, y_test, print_report=True):
         print("Confusion Matrix:\n", cm)
         print("Classification Report:\n", report)
 
-    return {"accuracy": acc, "confusion_matrix": cm, "classification_report": report}
+    return {
+        "accuracy": acc,
+        "confusion_matrix": cm,
+        "classification_report": report,
+    }

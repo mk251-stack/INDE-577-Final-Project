@@ -119,7 +119,7 @@ def _validate_xy(X: pd.DataFrame, y: pd.Series):
         raise ValueError("y contains missing values")
     for c in X.columns:
         if not pd.api.types.is_numeric_dtype(X[c]):
-            raise ValueError(f"Non numeric feature column: {c}")
+            raise ValueError(f"Non-numeric feature column: {c}")
     if not pd.api.types.is_numeric_dtype(y):
         raise ValueError("y must be numeric")
 
@@ -144,6 +144,21 @@ class RegressionTree:
         self.feature_names: Optional[list[str]] = None
 
     def split(self, X: pd.DataFrame, y: pd.Series):
+        """
+        Split the dataset into training and testing sets.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            Feature matrix.
+        y : pandas.Series
+            Target vector.
+
+        Returns
+        -------
+        X_train, X_test, y_train, y_test
+            Stratified train/test split.
+        """
         _validate_xy(X, y)
         return train_test_split(
             X,
@@ -154,12 +169,40 @@ class RegressionTree:
         )
 
     def fit(self, X_train: pd.DataFrame, y_train: pd.Series):
+        """
+        Fit the regression tree model.
+
+        Parameters
+        ----------
+        X_train : pandas.DataFrame
+            Training feature matrix.
+        y_train : pandas.Series
+            Training target vector.
+
+        Returns
+        -------
+        self : RegressionTree
+            Fitted model.
+        """
         _validate_xy(X_train, y_train)
         self.feature_names = list(X_train.columns)
         self.model.fit(X_train, y_train)
         return self
 
     def predict(self, X: pd.DataFrame):
+        """
+        Generate predictions for new data.
+
+        Parameters
+        ----------
+        X : pandas.DataFrame
+            Feature matrix.
+
+        Returns
+        -------
+        numpy.ndarray
+            Predicted target values.
+        """
         if not isinstance(X, pd.DataFrame):
             raise TypeError("X must be a pandas DataFrame")
         if self.feature_names is not None:
@@ -167,6 +210,21 @@ class RegressionTree:
         return self.model.predict(X)
 
     def evaluate(self, X_test: pd.DataFrame, y_test: pd.Series):
+        """
+        Evaluate model performance on a test set.
+
+        Parameters
+        ----------
+        X_test : pandas.DataFrame
+            Test feature matrix.
+        y_test : pandas.Series
+            True target values.
+
+        Returns
+        -------
+        dict
+            Dictionary containing MSE, MAE, and R² metrics.
+        """
         _validate_xy(X_test, y_test)
         y_pred = self.predict(X_test)
         mse = mean_squared_error(y_test, y_pred)
