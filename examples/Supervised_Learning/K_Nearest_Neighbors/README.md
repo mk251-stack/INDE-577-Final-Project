@@ -34,7 +34,7 @@ In contrast, individuals earning more than 50K form a much smaller and more hete
 
 Overall, this dataset demonstrates how the variability and imbalance within real demographic data shape model behavior, influence predictive accuracy, and highlight the strengths and limitations of different machine learning approaches.
 
-# Results
+# Key Findings:
 
 Running the model with k = 5 produced the following performance:
     Accuracy: ~0.83
@@ -47,10 +47,10 @@ Class-wise performance:
 Interpretation: Dense and homogeneous clusters that are well captured by KNN
 
 Class	Precision	Recall	F1-Score	 Explanation
-<=50K	~0.87	    ~0.91	~0.89	   Dense, homogeneous cluster → easy for KNN
->50K	~0.67	    ~0.58	~0.62	   Spread-out, heterogeneous patterns → harder for KNN
+- "<=50K	~0.87	    ~0.91	~0.89	   Dense, homogeneous cluster → easy for KNN"
+- ">50K	~0.67	    ~0.58	~0.62	   Spread-out, heterogeneous patterns → harder for KNN"
 
-# Interpretation
+# Interpretation and Learnings:
 
 These results align well with the underlying socioeconomic structure of the data.
 
