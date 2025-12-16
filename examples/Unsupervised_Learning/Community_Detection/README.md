@@ -13,6 +13,12 @@ The objective of this analysis is **structure discovery**, not prediction.
 
 ---
 
+## Notebook quick reference
+- **Dataset:** Fashion-MNIST image embeddings (subset loaded in-notebook)
+- **Expected runtime:** ~7–9 minutes on a modern laptop with the provided subsampling
+- **Key parameters to tweak:** number of nearest neighbors for the graph, maximum iterations, and convergence tolerance
+- **Demonstrates:** community detection via label propagation on image data and how graph structure influences discovered clusters
+
 ## Project Structure
 
 ### 1. Dataset and Representation

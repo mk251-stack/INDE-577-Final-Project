@@ -10,6 +10,12 @@ The objective is to evaluate how a single interpretable model performs on an imb
 
 I used a Decision Tree Classifier to predict whether a person’s income is greater than fifty thousand dollars or less than or equal to fifty thousand dollars based on demographic and employment features from the Adult Census Income dataset.
 
+## Notebook quick reference
+- **Dataset:** Adult Census Income (`datasets/census_income.csv`) with binary income labels
+- **Expected runtime:** ~4–6 minutes on a modern laptop
+- **Key parameters to tweak:** `max_depth`, `min_samples_split`, `min_samples_leaf`, and `class_weight`
+- **Demonstrates:** interpretable tree-based classification, handling categorical encodings, and the impact of depth constraints on overfitting
+
 *Algorithm:* <br>
 
 Decision Trees are supervised learning models that recursively partition the feature space using decision rules that maximize class separation. Each internal node represents a split on a single feature, branches represent outcomes of that rule, and leaf nodes store predicted class labels. 

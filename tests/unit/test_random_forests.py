@@ -141,6 +141,19 @@ def test_rf_feature_importances_are_sane():
     assert 0.99 <= total <= 1.01
 
 
+def test_rf_feature_importances_validate_feature_names_length():
+    """
+    Rationale
+    Feature importance outputs should fail loudly when the provided feature names
+    do not match the trained model inputs.
+    """
+    X, y = _make_toy_classification()
+    model = train_random_forest(X, y)
+
+    with pytest.raises(ValueError):
+        get_feature_importances(model, ["only_one_name"])
+
+
 def test_rf_raises_error_on_column_reorder():
     """
     Rationale

@@ -40,19 +40,21 @@ classifiers = [
 ]
 
 dependencies = [
-  "numpy",
-  "pandas",
-  "matplotlib",
-  "scipy",
-  "scikit-learn",
-  "statsmodels",
-  "seaborn"
+  "numpy>=1.23",
+  "pandas>=1.5",
+  "matplotlib>=3.6",
+  "scipy>=1.9",
+  "scikit-learn>=1.1",
+  "statsmodels>=0.13",
+  "seaborn>=0.12"
 ]
 
 
 [project.optional-dependencies]
 dev = [
-  "pytest"
+  "pytest>=7.4",
+  "jupyter>=1.0",
+  "ipykernel>=6.0"
 ]
 
 

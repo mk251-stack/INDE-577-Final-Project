@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 from typing import Optional
 
 
@@ -23,7 +24,9 @@ class MultilayerPerceptron:
     Notes
     -----
     - Uses full-batch or mini-batch gradient descent depending on `batch_size`
-    - Susceptible to vanishing gradients due to sigmoid activations
+    - Inputs should be standardized (zero mean, unit variance) and numeric
+    - Targets must be binary; {-1, 1} labels are internally mapped to {0, 1}
+    - Includes simple stability guards (gradient clipping and early stopping)
     - Designed to illustrate optimization challenges in neural networks
     """
 
@@ -35,6 +38,9 @@ class MultilayerPerceptron:
         random_state: Optional[int] = None,
         batch_size: Optional[int] = None,
         weight_decay: float = 0.0,
+        max_grad_norm: Optional[float] = 5.0,
+        tol: float = 1e-4,
+        patience: int = 5,
     ):
 
         """
@@ -54,6 +60,12 @@ class MultilayerPerceptron:
             Size of mini-batches. If None, full-batch gradient descent is used.
         weight_decay : float, default=0.0
             L2 regularization strength (0 disables regularization).
+        max_grad_norm : float or None, default=5.0
+            Threshold for gradient clipping. Set to None to disable clipping.
+        tol : float, default=1e-4
+            Minimum improvement in loss required before triggering early stopping.
+        patience : int, default=5
+            Number of epochs with loss improvement below `tol` before stopping.
         """
         self.hidden_units = hidden_units
         self.learning_rate = learning_rate
@@ -61,6 +73,9 @@ class MultilayerPerceptron:
         self.random_state = random_state
         self.batch_size = batch_size
         self.weight_decay = weight_decay
+        self.max_grad_norm = max_grad_norm
+        self.tol = tol
+        self.patience = patience
 
         self.W1 = None
         self.b1 = None
@@ -69,6 +84,8 @@ class MultilayerPerceptron:
 
         self.losses_ = []
         self._eps = 1e-10
+        self.stop_reason_ = None
+        self.n_epochs_ = 0
 
     # ------------------------------------------------------------------
     # Activation functions
@@ -220,10 +237,20 @@ class MultilayerPerceptron:
             dW1 += (self.weight_decay / m) * self.W1
         db1 = np.sum(dZ1, axis=0, keepdims=True) / m
 
+        if self.max_grad_norm is not None:
+            self._clip_gradients(dW1, dW2)
+
         self.W1 -= self.learning_rate * dW1
         self.b1 -= self.learning_rate * db1
         self.W2 -= self.learning_rate * dW2
         self.b2 -= self.learning_rate * db2
+
+    def _clip_gradients(self, dW1, dW2):
+        """Apply global-norm clipping to stabilize training."""
+        for grad in (dW1, dW2):
+            norm = np.linalg.norm(grad)
+            if norm > self.max_grad_norm > 0:
+                grad *= self.max_grad_norm / (norm + self._eps)
 
     # ------------------------------------------------------------------
     # Public API
@@ -244,14 +271,23 @@ class MultilayerPerceptron:
         self : MultilayerPerceptron
             Fitted model.
         """
+        X = np.asarray(X, dtype=float)
+        y = np.asarray(y, dtype=float)
+
+        self._validate_inputs(X, y)
+
         n_samples, n_features = X.shape
         rng = np.random.default_rng(self.random_state)
         self._initialize_weights(n_features, rng)
         self.losses_ = []
+        self.stop_reason_ = None
+        self.n_epochs_ = 0
 
         batch_size = self.batch_size or n_samples
 
-        for _ in range(self.epochs):
+        no_improve_epochs = 0
+
+        for epoch in range(self.epochs):
             indices = rng.permutation(n_samples)
             X_shuffled = X[indices]
             y_shuffled = y[indices]
@@ -266,6 +302,27 @@ class MultilayerPerceptron:
             _, A2_full = self._forward(X)
             loss = self._compute_loss(y, A2_full)
             self.losses_.append(loss)
+            self.n_epochs_ = epoch + 1
+
+            if not np.isfinite(loss) or loss > 1e6:
+                self.stop_reason_ = "loss_exploded"
+                warnings.warn(
+                    "Training stopped because the loss became non-finite or exploded. "
+                    "Verify input scaling and reduce the learning rate.",
+                    UserWarning,
+                )
+                break
+
+            if len(self.losses_) > 1:
+                improvement = self.losses_[-2] - self.losses_[-1]
+                if improvement < self.tol:
+                    no_improve_epochs += 1
+                else:
+                    no_improve_epochs = 0
+
+                if no_improve_epochs >= self.patience:
+                    self.stop_reason_ = "early_stopping"
+                    break
 
         return self
 
@@ -302,3 +359,47 @@ class MultilayerPerceptron:
         """
         probs = self.predict_proba(X)
         return (probs >= 0.5).astype(int)
+
+    # ------------------------------------------------------------------
+    # Validation helpers
+    # ------------------------------------------------------------------
+    def _validate_inputs(self, X, y):
+        """Validate feature scaling, numeric types, and binary labels."""
+        if X.ndim != 2:
+            raise ValueError("X must be a 2D array of shape (n_samples, n_features).")
+
+        if not np.issubdtype(X.dtype, np.number):
+            raise ValueError("X must contain numeric values. Please encode categorical features.")
+
+        if not np.isfinite(X).all():
+            raise ValueError("X contains NaN or infinite values. Clean or impute your data before training.")
+
+        feature_means = X.mean(axis=0)
+        feature_stds = X.std(axis=0)
+
+        if np.any(feature_stds == 0):
+            raise ValueError("At least one feature has zero variance; remove or adjust constant columns.")
+
+        if np.any(np.abs(feature_means) > 5) or np.any(feature_stds > 5):
+            warnings.warn(
+                "Inputs do not appear standardized (mean far from 0 or std far from 1). "
+                "Performance may degrade; please scale your features.",
+                UserWarning,
+            )
+
+        if y.ndim != 1:
+            raise ValueError("y must be a 1D array of binary labels.")
+
+        unique_labels = set(np.unique(y))
+        if unique_labels == {-1, 1}:
+            warnings.warn(
+                "Mapping labels from {-1, 1} to {0, 1} for compatibility.",
+                UserWarning,
+            )
+            y[:] = (y + 1) / 2
+        elif unique_labels != {0, 1}:
+            warnings.warn(
+                "MultilayerPerceptron only supports binary targets encoded as 0/1 or -1/1.",
+                UserWarning,
+            )
+            raise ValueError("Invalid labels: expected binary targets encoded as 0/1 or -1/1.")

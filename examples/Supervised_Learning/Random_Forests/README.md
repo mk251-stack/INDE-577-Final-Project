@@ -8,6 +8,12 @@ This notebook uses a Random Forest Classifier to predict whether a person’s in
 
 The objective here is to evaluate whether Random Forest improves stability and recall for the higher income class in a highly imbalanced tabular dataset.
 
+## Notebook quick reference
+- **Dataset:** Adult Census Income (`datasets/census_income.csv`) with binary income label
+- **Expected runtime:** ~5–7 minutes on a modern laptop using the provided hyperparameters
+- **Key parameters to tweak:** `n_estimators`, `max_depth`, `min_samples_leaf`, and `class_weight`
+- **Demonstrates:** tree-ensemble gains over single trees, feature importance extraction, and handling of class imbalance
+
 Random Forests are well suited for this dataset because they:
 - Reduce overfitting by averaging predictions across many trees
 - Capture nonlinear interactions and complex feature relationships

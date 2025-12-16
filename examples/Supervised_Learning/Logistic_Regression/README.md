@@ -8,6 +8,12 @@ The full implementation, analysis, and results are documented in:
 
 Logistic_Regression.ipynb
 
+## Notebook quick reference
+- **Dataset:** U.S. Energy Production (`datasets/energy.csv`) with a binary target derived from median generation
+- **Expected runtime:** ~6–8 minutes on a modern laptop with standard scaling
+- **Key parameters to tweak:** learning rate, number of iterations/regularization for custom model; penalty/solver for scikit-learn baseline
+- **Demonstrates:** logistic regression decision boundaries, coefficient interpretation, and ROC/AUC evaluation for a balanced binary task
+
 ## Goal of the Project
 
 The objective is to use logistic regression to classify each observation as:
@@ -127,4 +133,3 @@ The custom model correctly classifies approximately 78–80% of each class.
 - The custom implementation matches Scikit-Learn performance exactly, validating correctness.
 - AUC values around 0.886 indicate strong discriminative power.
 - The dataset is large, balanced, and clean, making it well-suited for classification.
-

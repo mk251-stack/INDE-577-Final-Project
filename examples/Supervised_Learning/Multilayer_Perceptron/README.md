@@ -2,6 +2,12 @@
 
 This directory contains example code and notes for the Multilayer Perceptron (MLP) algorithm in supervised learning, using both a custom implementation and a comparison with scikit-learn's MLPClassifier.
 
+## Notebook quick reference
+- **Dataset:** U.S. Energy Production (`datasets/energy.csv`) with median-threshold binary label
+- **Expected runtime:** ~10–12 minutes on a modern laptop when training both custom and scikit-learn models
+- **Key parameters to tweak:** hidden_units, learning_rate, epochs, batch_size, and regularization
+- **Demonstrates:** end-to-end preprocessing + scaling, stability challenges with sigmoid activations, and comparison to `sklearn.neural_network.MLPClassifier`
+
 ## Algorithm
 
 The Multilayer Perceptron (MLP) is a feedforward neural network composed of fully connected layers.

@@ -5,6 +5,12 @@ Random Forest (bagging), AdaBoost (boosting), Bagging with Decision Trees, Histo
 
 ---
 
+## Notebook quick reference
+- **Dataset:** UCI Credit Card Default (`datasets/UCI_Credit_Card.csv`) with binary default indicator
+- **Expected runtime:** ~8–10 minutes on a modern laptop for all ensemble variants
+- **Key parameters to tweak:** `n_estimators`, learning rate (for boosting), tree depth constraints, and voting weights
+- **Demonstrates:** side-by-side comparison of bagging, boosting, and voting ensembles on an imbalanced classification problem
+
 ## Algorithm
 
 Ensemble methods combine multiple learners to reduce variance and bias compared to a single model. In this notebook:

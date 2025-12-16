@@ -4,6 +4,12 @@ This directory contains the custom Perceptron implementation and a Jupyter noteb
 
 The implementation follows the classic perceptron update rule and is consistent with the structure used in the other supervised learning modules of this repository.
 
+## Notebook quick reference
+- **Dataset:** U.S. Energy Production (`datasets/energy.csv`) with a median-based binary target
+- **Expected runtime:** ~4–6 minutes on a modern laptop after scaling numeric features
+- **Key parameters to tweak:** learning rate, number of epochs, shuffling/seed, and feature standardization
+- **Demonstrates:** linear separability limits and how the perceptron update rule behaves on moderately imbalanced energy data
+
 ## Overview of the Algorithm
 
 The Perceptron is one of the earliest supervised learning algorithms for binary classification.  
