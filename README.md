@@ -26,7 +26,10 @@ pip install -e .[dev]
 
 ## Quickstart
 
-Train a k-Nearest Neighbors classifier on a tiny dataset:
+Train a k-Nearest Neighbors classifier on a tiny dataset using the
+minimal in-house `KNNClassifier`. This lightweight implementation mirrors the
+`fit` / `predict` interface of scikit-learn while keeping the code transparent
+for instructional purposes:
 
 ```python
 import numpy as np
@@ -39,6 +42,17 @@ clf = KNNClassifier(n_neighbors=3).fit(X, y)
 predictions = clf.predict([[0.1, 0.1]])
 print(predictions)
 ```
+
+For richer, mixed-type datasets, the library also exposes helper functions that
+build a preprocessing + k-NN pipeline (one-hot encoding for categoricals,
+standardization for numerics) and convenience train/eval routines:
+
+- `build_knn_pipeline(cat_cols, num_cols, n_neighbors=9)`
+- `train_knn_model(df, target_col, test_size=0.2, random_state=42, ...)`
+- `evaluate_knn_model(model, X_test, y_test, print_report=True)`
+
+These helpers live in `rice_ml.supervised_learning.k_nearest_neighbors` and are
+exported through `rice_ml.supervised_learning` alongside `KNNClassifier`.
 
 ## Project layout
 
