@@ -83,4 +83,4 @@ The notebook walks through:
 - Susceptible to overfitting; train/validation curves are important diagnostics.
 
 ## Conclusions
-MLP is appropriate when nonlinear relationships and interactions matter, but requires careful tuning and regularization to generalize. This outcome is expected for a minimal MLP implementation without advanced optimizers,regularization, or architectural enhancements, and serves as a diagnostic baseline rather than a production-ready neural network.
+MLP is appropriate when nonlinear relationships and interactions matter, but requires careful tuning and regularization to generalize. This outcome is expected for a minimal MLP implementation without advanced optimizers, regularization, or architectural enhancements, and serves as a diagnostic baseline rather than a production-ready neural network.

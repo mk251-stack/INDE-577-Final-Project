@@ -43,10 +43,7 @@ Greater than fifty thousand dollars versus less than or equal to fifty thousand 
 The dataset is imbalanced, with the lower income class forming the majority of observations. This motivates stratified splitting and careful evaluation beyond accuracy alone.
 
 *Feature handling* <br>
-The dataset includes a column named fnlwgt, which represents a sampling weight rather than an intrinsic personal attribute. While retained in the raw data, fnlwgt is excluded from the model features because it does not provide meaningful predictive signal for a simple Decision Tree classifier.
-The original dataset also contains the column fnlwgt. For this project I kept fnlwgt in the raw data but dropped it from the model features because it behaves like a sampling weight and does not provide meaningful predictive signal in a simple Decision Tree.
-
-The original dataset contains the column `fnlwgt`. For this project, `fnlwgt` is kept in the raw data but dropped from the model features because it behaves like a sampling weight and does not provide meaningful predictive signal in a simple Decision Tree.
+The dataset includes fnlwgt, a sampling-weight column retained in the raw data but dropped from model features because it does not provide meaningful predictive signal.
 
 # Training configuration: 
 The Decision Tree classifier is trained using the Gini impurity criterion. To reduce overfitting and control model complexity, the following hyperparameters are applied:

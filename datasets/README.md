@@ -32,10 +32,10 @@ included for transparency and reproducibility.
 
 ## Other Datasets
 
-### Fashion-MNIST (`FashionMNIST/`)
-Image dataset used for unsupervised learning and community detection
-examples. The dataset was obtained from Kaggle and stored locally for
-consistent access.
+### Fashion-MNIST (FashionMNIST/)
+Image dataset used for unsupervised learning and community detection examples.
+Not bundled in the repo; download from Kaggle into datasets/FashionMNIST/
+before running the notebooks.
 
 ### Boston Housing (`BostonHousing.csv`)
 Tabular regression dataset used in supervised learning examples.

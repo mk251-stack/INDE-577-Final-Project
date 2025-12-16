@@ -69,6 +69,7 @@ Overall, the Random Forest demonstrates more stable predictions and reduced sens
 ---
 
 ## Feature Importance
+The ensemble ranks marital_status, education_num, capital_gain, capital_loss, age, and hours_per_week as the strongest predictors, aligning with the decision-tree baseline.
 
 # Conclusion and Outlook:
 

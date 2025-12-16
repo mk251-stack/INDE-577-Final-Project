@@ -79,7 +79,7 @@ Key findings:
 - No missing values detected.
 EDA visualizations include:
 - Histograms for numeric features
-- Bar charts for the top 20 cat.
+- Bar charts for the top 20 categories.
 - Correlation heatmap
 
 ## Model Development
@@ -97,16 +97,11 @@ A standard LogisticRegression(max_iter=1000) model is used for benchmarking.
 
 ## Results
 Accuracy
-
-Both models achieved nearly identical accuracy:
-
-Model - Accuracy
-Custom Logistic Regression - 0.7948
-Scikit-Learn Logistic Regression	- 0.7948
-### AUC Score
-Model	- AUC
-Custom Logistic Regression - 0.8861
-Scikit-Learn Logistic Regression - 0.8861
+- Custom Logistic Regression: 0.7948
+- Scikit-Learn Logistic Regression: 0.7948
+AUC
+- Custom Logistic Regression: 0.8861
+- Scikit-Learn Logistic Regression: 0.8861
 
 ### Confusion Matrix
 The custom model correctly classifies approximately 78–80% of each class.

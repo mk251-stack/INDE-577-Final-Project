@@ -6,7 +6,7 @@ Each internal node represents a decision rule on a single feature, each branch r
 
 In this project, I use a Regression Tree to predict median home values using the Boston Housing dataset. The goal is to explore how a depth constrained tree balances interpretability, predictive performance, and generalization on a relatively small but well studied regression dataset.
 
-Regression Trees are a good fit here because they handle nonlinear relationships well, are robust to feature scaling, and provide intuitive explanations through tree structure and feature importance. Rather than training a fully grown tree that would almost certainly overfit, the focus is placed on tuning tree depth to identify a model that performs well on unseen data while remaining interpretable.
+Regression Trees are a good fit here because they handle nonlinear relationships well, are robust to feature scaling, and provide intuitive explanations through tree structure and feature importance.
 
 Rather than training a fully grown tree that would almost certainly overfit, I focus on tuning tree depth to identify a model that performs well on unseen data while remaining interpretable.
 
