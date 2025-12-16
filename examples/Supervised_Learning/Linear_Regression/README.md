@@ -4,6 +4,12 @@ This directory contains example code and notes for the Linear Regression algorit
 
 ---
 
+## Notebook quick reference
+- **Dataset:** Boston Housing (`datasets/BostonHousing.csv`) predicting median home price
+- **Expected runtime:** ~4–6 minutes on a modern laptop
+- **Key parameters to tweak:** feature subset selection, regularization strength (when using variants), and train/test split size
+- **Demonstrates:** closed-form OLS fitting, diagnostics for residuals, and comparison to `sklearn.linear_model.LinearRegression`
+
 ## Algorithm
 
 Linear Regression models the relationship between a continuous target variable and a set of input features by fitting a linear function that minimizes the sum of squared residuals.

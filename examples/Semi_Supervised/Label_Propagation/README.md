@@ -13,6 +13,12 @@ purely supervised baseline.
 
 ---
 
+## Notebook quick reference
+- **Dataset:** Fashion-MNIST images with partial labels
+- **Expected runtime:** ~10–12 minutes on a modern laptop with the provided subsampling
+- **Key parameters to tweak:** fraction of labeled data, number of neighbors in the graph, and maximum iterations
+- **Demonstrates:** semi-supervised label propagation, graph construction, and comparison to a supervised baseline
+
 ## Algorithm Overview: Label Propagation
 
 Label Propagation is a **graph-based semi-supervised algorithm** that operates as follows:

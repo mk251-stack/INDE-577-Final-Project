@@ -184,6 +184,12 @@ def get_feature_importances(
         - importance
     """
 
+    if len(feature_names) != len(model.feature_importances_):
+        raise ValueError(
+            "feature_names length must match the number of model features "
+            f"({len(model.feature_importances_)}). Received {len(feature_names)}."
+        )
+
     return (
         pd.DataFrame(
             {

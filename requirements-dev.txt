@@ -1,0 +1,4 @@
+--requirement requirements.txt
+pytest>=7.4
+jupyter>=1.0
+ipykernel>=6.0

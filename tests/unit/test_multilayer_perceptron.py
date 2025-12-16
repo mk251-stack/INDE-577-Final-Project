@@ -1,4 +1,6 @@
 import numpy as np
+import pytest
+import warnings
 
 from rice_ml.supervised_learning.multilayer_perceptron import MultilayerPerceptron
 
@@ -51,3 +53,26 @@ def test_predict_outputs_binary_labels():
 
     assert set(np.unique(preds)) <= {0, 1}
     assert preds.shape == y.shape
+
+
+def test_mlp_rejects_multiclass_labels_with_warning():
+    X, _ = _separable_dataset(n_per_class=10)
+    y = np.array([0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1])
+
+    model = MultilayerPerceptron(epochs=10)
+
+    with pytest.warns(UserWarning):
+        with pytest.raises(ValueError):
+            model.fit(X, y)
+
+
+def test_mlp_stops_on_loss_explosion():
+    X, y = _separable_dataset(n_per_class=30)
+
+    model = MultilayerPerceptron(hidden_units=4, learning_rate=5.0, epochs=200, random_state=0)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=UserWarning)
+        model.fit(X, y)
+
+    assert model.stop_reason_ in {"loss_exploded", "early_stopping"}
+    assert model.n_epochs_ < model.epochs

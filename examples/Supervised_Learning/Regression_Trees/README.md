@@ -10,6 +10,12 @@ Regression Trees are a good fit here because they handle nonlinear relationships
 
 Rather than training a fully grown tree that would almost certainly overfit, I focus on tuning tree depth to identify a model that performs well on unseen data while remaining interpretable.
 
+## Notebook quick reference
+- **Dataset:** Boston Housing (`datasets/BostonHousing.csv`) predicting median home value
+- **Expected runtime:** ~5–7 minutes on a modern laptop
+- **Key parameters to tweak:** `max_depth`, `min_samples_leaf`, and feature preprocessing choices
+- **Demonstrates:** regression tree fitting, depth tuning to avoid overfitting, and feature importance interpretation for tabular regression
+
 # Data Set
 
 The Boston Housing dataset contains socioeconomic and geographic indicators such as crime rate, average number of rooms, distance to employment centers, and tax rates, with the target variable being median home value.

@@ -9,6 +9,12 @@ K-Means is used here as an **exploratory tool** to understand structure in high-
 
 ---
 
+## Notebook quick reference
+- **Dataset:** Adult Census Income (`datasets/census_income.csv`) without using labels during clustering
+- **Expected runtime:** ~6–8 minutes on a modern laptop with standard scaling
+- **Key parameters to tweak:** number of clusters `k`, initialization strategy, and maximum iterations
+- **Demonstrates:** centroid-based clustering, inertia/Elbow analysis, and post-hoc inspection of cluster compositions
+
 ## Project Structure
 
 ### 1. Dataset and Representation

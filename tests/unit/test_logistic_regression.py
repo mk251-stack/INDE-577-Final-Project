@@ -43,3 +43,25 @@ def test_logistic_regression_rejects_non_1d_targets():
 
     with pytest.raises(ValueError):
         model.fit(X, y)
+
+
+def test_logistic_regression_rejects_multiclass_targets_with_warning():
+    X = np.array([[0.0], [1.0], [2.0]])
+    y = np.array([0, 1, 2])
+
+    model = LogisticRegression()
+
+    with pytest.warns(UserWarning):
+        with pytest.raises(ValueError):
+            model.fit(X, y)
+
+
+def test_logistic_regression_early_stopping_on_tolerance():
+    X = np.array([[-2.0], [-1.0], [1.0], [2.0]])
+    y = np.array([0, 0, 1, 1])
+
+    model = LogisticRegression(lr=0.2, num_iter=5000, tol=1e-4, verbose=False)
+    model.fit(X, y)
+
+    assert model.converged_ is True
+    assert model.n_iter_ < 5000

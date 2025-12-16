@@ -12,6 +12,12 @@ and executed in the example notebook:
 
 examples/Supervised_Learning/K_Nearest_Neighbors/K_Nearest_Neighbors.ipynb
 
+## Notebook quick reference
+- **Dataset:** Adult Census Income (`datasets/census_income.csv`, ~32k rows)
+- **Expected runtime:** ~5–7 minutes on a modern laptop using the provided sampling and scaling steps
+- **Key parameters to tweak:** number of neighbors `k`, distance metric, weighting scheme, and train/test split ratio
+- **Demonstrates:** distance-based binary classification with required one-hot encoding and standardization
+
 # Algorithm
 
 KNN is a non-parametric classification method that predicts the class of a new instance based on the majority vote of its k nearest neighbors in feature space. Because KNN relies on distances, proper preprocessing is critical and therefore our pipeline includes:

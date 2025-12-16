@@ -5,6 +5,12 @@ The workflow is designed to handle **large, high-dimensional datasets** through 
 
 ---
 
+## Notebook quick reference
+- **Dataset:** U.S. Energy Production (`datasets/energy.csv`), numeric features only
+- **Expected runtime:** ~8–10 minutes on a modern laptop with the subsampling and PCA steps shown
+- **Key parameters to tweak:** `eps`, `min_samples`, and PCA `n_components`
+- **Demonstrates:** density-based clustering, noise detection, and the role of scaling/dimensionality reduction for DBSCAN
+
 ## Algorithm
 
 DBSCAN is an **unsupervised, density-based clustering algorithm** that groups observations based on local neighborhood density rather than centroid distance.  

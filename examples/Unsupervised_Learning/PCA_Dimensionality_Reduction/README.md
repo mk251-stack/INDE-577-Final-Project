@@ -6,6 +6,12 @@ The goal of this analysis is to simplify a multi-feature dataset, uncover struct
 
 ---
 
+## Notebook quick reference
+- **Dataset:** U.S. Energy Production (`datasets/energy.csv`) with numeric features
+- **Expected runtime:** ~4–6 minutes on a modern laptop
+- **Key parameters to tweak:** number of principal components, scaling strategy, and explained variance thresholds
+- **Demonstrates:** PCA for dimensionality reduction, variance explained plots, and reconstruction error inspection
+
 ## Project Structure
 
 ### 1. Load and Explore Dataset
@@ -83,4 +89,3 @@ anomaly detection, or time-series analysis without recomputing PCA.
 ## Conclusion
 PCA successfully reduces the energy dataset to three components while retaining **89.74%** of the original variance. This simplifies the dataset, enhances interpretability, and prepares it for downstream tasks such as clustering or anomaly detection.  
 The results confirm that PCA is an appropriate and powerful unsupervised technique for analyzing the structure of the energy dataset.
-
