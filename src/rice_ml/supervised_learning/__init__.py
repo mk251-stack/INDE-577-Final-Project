@@ -8,6 +8,7 @@ from scratch and with scikit-learn benchmarks.
 from .perceptron import Perceptron
 from .multilayer_perceptron import MultilayerPerceptron
 from .k_nearest_neighbors import (
+    KNNClassifier,
     build_knn_pipeline,
     train_knn_model,
     evaluate_knn_model,
@@ -32,6 +33,7 @@ __all__ = [
     "train_random_forest",
     "evaluate_random_forest",
     "get_feature_importances",
+    "KNNClassifier",
     "build_knn_pipeline",
     "train_knn_model",
     "evaluate_knn_model",

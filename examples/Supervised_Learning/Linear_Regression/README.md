@@ -1,19 +1,14 @@
 # Linear Regression
 
-This directory contains example code and notes for the Linear Regression algorithm
-in supervised learning. The example focuses on **housing price prediction** using a
-complete machine learning pipeline and several custom-built Python modules.
+This directory contains example code and notes for the Linear Regression algorithm in supervised learning. The example focuses on **housing price prediction** using a complete machine learning pipeline and several custom-built Python modules.
 
 ---
 
 ## Algorithm
 
-Linear Regression models the relationship between a continuous target variable and
-a set of input features by fitting a linear function that minimizes the sum of
-squared residuals.
+Linear Regression models the relationship between a continuous target variable and a set of input features by fitting a linear function that minimizes the sum of squared residuals.
 
-In this project, the goal is to fit a model that predicts **median housing price**
-using tabular real-estate features. The implementation includes:
+In this project, the goal is to fit a model that predicts **median housing price** using tabular real-estate features. The implementation includes:
 
 - Ordinary Least Squares (OLS)
 - Closed-form Normal Equation solver
@@ -76,8 +71,7 @@ This dataset contains real-estate features such as:
 **Target variable:**  
 - `MEDV` — Median value of owner-occupied homes.
 
-Preprocessing includes missing-value imputation, type coercion,
-VIF-based feature removal, and outlier diagnostics.
+Preprocessing includes missing-value imputation, type coercion, VIF-based feature removal, and outlier diagnostics.
 
 ---
 
@@ -120,36 +114,26 @@ From the housing price prediction task, several important observations emerge:
   - proportion of lower-status population (`LSTAT`)
   - pupil–teacher ratio (`PTRATIO`)
 
-- **Multicollinearity was significant** among several predictors (e.g., `TAX`, `INDUS`, `RAD`), motivating the use of
-  Variance Inflation Factor (VIF)–based feature selection. Removing highly collinear variables improved coefficient
-  stability and interpretability without degrading predictive performance.
+- **Multicollinearity was significant** among several predictors (e.g., `TAX`, `INDUS`, `RAD`), motivating the use of Variance Inflation Factor (VIF)–based feature selection. Removing highly collinear variables improved coefficient stability and interpretability without degrading predictive performance.
 
-- The **custom OLS implementation** produced coefficients, predictions, and performance metrics
-  consistent with `sklearn.linear_model.LinearRegression`, validating the correctness of the implementation.
+- The **custom OLS implementation** produced coefficients, predictions, and performance metrics consistent with `sklearn.linear_model.LinearRegression`, validating the correctness of the implementation.
 
 - **Residual diagnostics** showed:
   - mild deviations from normality in the tails,
-  - some heteroskedasticity for high predicted values,
-  which are common in real-world housing data and highlight the limits of strict OLS assumptions.
+  - some heteroskedasticity for high predicted values, which are common in real-world housing data and highlight the limits of strict OLS assumptions.
 
-- Cross-validation results demonstrated **stable generalization performance**, with consistent MSE and R² values
-  across folds, indicating that the model is not overly sensitive to the training split.
+- Cross-validation results demonstrated **stable generalization performance**, with consistent MSE and R² values across folds, indicating that the model is not overly sensitive to the training split.
 
 ---
 
 ## Conclusion
 
-This example demonstrates how Linear Regression can be implemented as a **complete, interpretable supervised learning
-pipeline**, rather than as a black-box model.
+This example demonstrates how Linear Regression can be implemented as a **complete, interpretable supervised learning pipeline**, rather than as a black-box model.
 
 Key takeaways include:
 
-- Linear Regression remains a strong **baseline model** for continuous prediction tasks, especially when
-  interpretability is important.
-- Proper preprocessing — particularly **handling missing values, scaling, and multicollinearity control** —
-  is essential for reliable coefficient estimates and meaningful inference.
-- Diagnostic tools such as residual plots and normality tests are critical for assessing
-  the validity of model assumptions.
-- While Linear Regression is simple and computationally efficient, it may struggle with
-  nonlinear relationships and heteroskedastic data, motivating the use of more flexible models
+- Linear Regression remains a strong **baseline model** for continuous prediction tasks, especially when interpretability is important.
+- Proper preprocessing — particularly **handling missing values, scaling, and multicollinearity control** — is essential for reliable coefficient estimates and meaningful inference.
+- Diagnostic tools such as residual plots and normality tests are critical for assessing the validity of model assumptions.
+- While Linear Regression is simple and computationally efficient, it may struggle with nonlinear relationships and heteroskedastic data, motivating the use of more flexible models
   (e.g., tree-based or ensemble methods) in later sections of this project.
