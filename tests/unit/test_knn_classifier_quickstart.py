@@ -1,14 +1,25 @@
+from pathlib import Path
+
 import numpy as np
 
-from rice_ml.supervised_learning import KNNClassifier
 
+def test_readme_quickstart_snippet_runs():
+    readme = Path("README.md").read_text(encoding="utf-8")
+    assert "## Quickstart" in readme, "README missing Quickstart section"
 
-def test_knn_classifier_quickstart_example_runs():
-    X = np.array([[0, 0], [0, 1], [1, 0], [1, 1]], dtype=float)
-    y = np.array([0, 0, 1, 1])
+    quickstart_block = readme.split("## Quickstart", maxsplit=1)[1]
+    code_start = quickstart_block.find("```python")
+    assert code_start != -1, "Quickstart Python block not found"
 
-    clf = KNNClassifier(n_neighbors=3).fit(X, y)
-    preds = clf.predict([[0.1, 0.1]])
+    code_start += len("```python\n")
+    code_end = quickstart_block.find("```", code_start)
+    assert code_end != -1, "Quickstart Python block not terminated"
 
-    assert preds.shape == (1,)
-    assert preds[0] in y
+    code = quickstart_block[code_start:code_end].strip()
+    namespace = {}
+    exec(code, namespace)
+    predictions = namespace.get("predictions")
+    assert predictions is not None, "Snippet should define `predictions`"
+    assert isinstance(predictions, np.ndarray)
+    assert predictions.shape == (1,)
+    assert predictions[0] in namespace["y"]
