@@ -21,10 +21,23 @@ This module provides:
 
 Notes
 -----
-KNN is distance based, so numeric feature scaling is important. This module uses
-StandardScaler for numeric columns and one-hot encoding for categorical columns.
+This module provides two KNN-based entry points:
+
+1. `KNNClassifier`:
+   A minimal NumPy-based implementation intended for teaching and
+   quickstart usage. It supports a simple `fit` / `predict` interface
+   and assumes purely numeric input features.
+
+2. `build_knn_pipeline`:
+   A scikit-learn pipeline with preprocessing (one-hot encoding for
+   categorical features and standardization for numeric features),
+   intended for realistic datasets with mixed feature types.
+
+KNN is distance based, so numeric feature scaling is important when using
+distance metrics such as Euclidean distance.
 """
 
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
@@ -32,6 +45,90 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+
+class KNNClassifier:
+    """
+    Lightweight k-Nearest Neighbors classifier for teaching and quickstart usage.
+
+    This implementation is intentionally simple and only relies on NumPy.
+    It supports the minimal fit/predict interface used in the README example.
+    """
+
+    def __init__(self, n_neighbors=3):
+        if n_neighbors < 1:
+            raise ValueError("n_neighbors must be at least 1")
+        self.n_neighbors = n_neighbors
+        self._X = None
+        self._y = None
+
+    def fit(self, X, y):
+        """
+        Store the training data.
+
+        Parameters
+        ----------
+        X : array-like, shape (n_samples, n_features)
+            Training features.
+        y : array-like, shape (n_samples,)
+            Training labels.
+
+        Returns
+        -------
+        self : KNNClassifier
+            Fitted estimator.
+        """
+        X_arr = np.asarray(X, dtype=float)
+        y_arr = np.asarray(y)
+
+        if X_arr.ndim != 2:
+            raise ValueError("X must be a 2D array of shape (n_samples, n_features)")
+        if X_arr.shape[0] != y_arr.shape[0]:
+            raise ValueError("X and y must have the same number of samples")
+        if self.n_neighbors > X_arr.shape[0]:
+            raise ValueError("n_neighbors cannot exceed number of training samples")
+
+        self._X = X_arr
+        self._y = y_arr
+        return self
+
+    def predict(self, X):
+        """
+        Predict class labels for the given samples.
+
+        Parameters
+        ----------
+        X : array-like, shape (n_queries, n_features)
+            Samples to classify.
+
+        Returns
+        -------
+        preds : ndarray, shape (n_queries,)
+            Predicted labels.
+        """
+        if self._X is None or self._y is None:
+            raise RuntimeError("The classifier must be fitted before calling predict.")
+
+        X_arr = np.asarray(X, dtype=float)
+        if X_arr.ndim != 2:
+            raise ValueError("X must be a 2D array of shape (n_samples, n_features)")
+
+        if X_arr.shape[1] != self._X.shape[1]:
+            raise ValueError("Feature dimension mismatch between training and input data")
+
+        # Compute pairwise Euclidean distances between queries and training points.
+        diff = self._X[None, :, :] - X_arr[:, None, :]
+        distances = np.linalg.norm(diff, axis=2)
+
+        neighbor_idxs = np.argsort(distances, axis=1)[:, : self.n_neighbors]
+        neighbor_labels = self._y[neighbor_idxs]
+
+        preds = []
+        for labels in neighbor_labels:
+            values, counts = np.unique(labels, return_counts=True)
+            preds.append(values[np.argmax(counts)])
+
+        return np.array(preds)
 
 
 def build_knn_pipeline(cat_cols, num_cols, n_neighbors=9):
